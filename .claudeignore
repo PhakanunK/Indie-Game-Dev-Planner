@@ -1,0 +1,20 @@
+# Secrets — Claude should never read these
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.p12
+*.pfx
+*.cert
+
+# Dependencies — too large, not useful to read
+node_modules/
+.next/
+dist/
+build/
+
+# Docker volumes / Supabase local data
+supabase/.branches
+supabase/.temp
+postgres-data/
