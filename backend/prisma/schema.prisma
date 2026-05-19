@@ -1,0 +1,165 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id             Int             @id @default(autoincrement())
+  email          String          @unique
+  password_hash  String
+  created_at     DateTime        @default(now())
+  projects       Project[]
+  projectMembers ProjectMember[]
+  inviteTokens   InviteToken[]
+  tasks          Task[]
+  scenes         Scene[]
+  activities     Activity[]
+
+  @@map("users")
+}
+
+model Project {
+  id             Int             @id @default(autoincrement())
+  owner_id       Int
+  owner          User            @relation(fields: [owner_id], references: [id])
+  name           String
+  genre          String
+  engine         String
+  platform       String
+  description    String?         @db.Text
+  created_at     DateTime        @default(now())
+  updated_at     DateTime        @updatedAt
+  projectMembers ProjectMember[]
+  inviteTokens   InviteToken[]
+  tasks          Task[]
+  scenes         Scene[]
+  activities     Activity[]
+
+  @@map("projects")
+}
+
+model ProjectMember {
+  id         Int      @id @default(autoincrement())
+  project_id Int
+  project    Project  @relation(fields: [project_id], references: [id])
+  user_id    Int
+  user       User     @relation(fields: [user_id], references: [id])
+  role       UserRole @default(member)
+  joined_at  DateTime @default(now())
+
+  @@unique([project_id, user_id])
+  @@map("project_members")
+}
+
+model InviteToken {
+  id            Int      @id @default(autoincrement())
+  project_id    Int
+  project       Project  @relation(fields: [project_id], references: [id])
+  token         String   @unique
+  created_by_id Int
+  created_by    User     @relation(fields: [created_by_id], references: [id])
+  expires_at    DateTime
+  used          Boolean  @default(false)
+  created_at    DateTime @default(now())
+
+  @@map("invite_tokens")
+}
+
+model Task {
+  id            Int        @id @default(autoincrement())
+  project_id    Int
+  project       Project    @relation(fields: [project_id], references: [id])
+  created_by_id Int
+  created_by    User       @relation(fields: [created_by_id], references: [id])
+  title         String
+  status        TaskStatus @default(todo)
+  due_date      DateTime?
+  order         Int
+  created_at    DateTime   @default(now())
+  updated_at    DateTime   @updatedAt
+  deleted_at    DateTime?
+
+  @@index([project_id, status])
+  @@map("tasks")
+}
+
+model Scene {
+  id            Int         @id @default(autoincrement())
+  project_id    Int
+  project       Project     @relation(fields: [project_id], references: [id])
+  created_by_id Int
+  created_by    User        @relation(fields: [created_by_id], references: [id])
+  title         String
+  description   String?     @db.Text
+  image_url     String?     @db.Text
+  type          SceneType
+  status        SceneStatus @default(planned)
+  created_at    DateTime    @default(now())
+  updated_at    DateTime    @updatedAt
+  outgoinglinks SceneLink[] @relation("FromScene")
+  incominglinks SceneLink[] @relation("ToScene")
+
+  @@index([project_id])
+  @@map("scenes")
+}
+
+model SceneLink {
+  id            Int     @id @default(autoincrement())
+  from_scene_id Int
+  from_scene    Scene   @relation("FromScene", fields: [from_scene_id], references: [id])
+  to_scene_id   Int
+  to_scene      Scene   @relation("ToScene", fields: [to_scene_id], references: [id])
+  label         String?
+
+  @@unique([from_scene_id, to_scene_id])
+  @@map("scene_links")
+}
+
+model Activity {
+  id          Int      @id @default(autoincrement())
+  project_id  Int
+  project     Project  @relation(fields: [project_id], references: [id])
+  user_id     Int
+  user        User     @relation(fields: [user_id], references: [id])
+  action      String
+  entity_type String
+  entity_id   Int
+  created_at  DateTime @default(now())
+
+  @@index([project_id])
+  @@map("activities")
+}
+
+enum UserRole {
+  owner
+  member
+}
+
+enum TaskStatus {
+  todo
+  in_progress
+  done
+}
+
+enum SceneType {
+  cutscene
+  gameplay
+  boss
+  dialogue
+  other
+}
+
+enum SceneStatus {
+  planned
+  in_progress
+  done
+}
