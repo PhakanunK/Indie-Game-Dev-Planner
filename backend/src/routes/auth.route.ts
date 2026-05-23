@@ -11,8 +11,7 @@ authRouter.post("/register", async (req, res) => {
         const user = await register(body.email, body.password)
         res.status(201).json(user)
     } catch (error) {
-        console.log(error)
-        res.status(400).json({ message: "Registration failed" })
+        res.status(400).json({message: "Registration failed"})
     }
 })
 
@@ -23,7 +22,6 @@ authRouter.post("/login", async (req, res) => {
         res.status(200).json(token)
     } catch(error) {
         res.status(400).json({message: "Login failed"})
-
     }
 })
 

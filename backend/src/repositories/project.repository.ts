@@ -9,14 +9,14 @@ export const findAllByUserId = (userId: number) => {
     return prisma.project.findMany({
         where: {
             projectMembers: {
-                some: { user_id: userId}
+                some: {user_id: userId}
             }
         }
     })
 }
 
 export const deleteById = (id: number) => {
-    return prisma.project.delete({ where: {id}})
+    return prisma.project.delete({where: {id}})
 }
 
 export const create = (ownerId: number, data: CreateProjectData) => {
@@ -32,5 +32,5 @@ export const create = (ownerId: number, data: CreateProjectData) => {
 }
 
 export const update = (id: number, data: UpdateProjectData) => {
-    return prisma.project.update({ where: {id}, data })
+    return prisma.project.update({where: {id}, data})
 }

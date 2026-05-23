@@ -10,7 +10,7 @@ projectRouter.get("/", authenticate, async (req, res) => {
         const project = await getProjects(req.userId)
         res.status(200).json(project)
     } catch (error) {
-        res.status(400).json({ message: "Something went wrong" })
+        res.status(400).json({message:"Something went wrong"})
     }
 })
 
@@ -20,7 +20,7 @@ projectRouter.post("/", authenticate, async (req, res) => {
         const project = await createProject(req.userId, body)
         res.status(201).json(project)
     } catch(error) {
-        res.status(400).json({ message: "Something went wrong" })
+        res.status(400).json({message:"Something went wrong"})
     }
 })
 
@@ -30,7 +30,7 @@ projectRouter.get("/:id", authenticate, async (req, res) => {
         const project = await getProject(id)
         res.status(200).json(project)
     } catch (error) {
-        res.status(400).json({ message: "Something went wrong" })
+        res.status(400).json({message: "Something went wrong"})
     }
 })
 
@@ -41,17 +41,17 @@ projectRouter.patch("/:id", authenticate, async (req, res) => {
         const project = await updateProject(id, body, req.userId)
         res.status(200).json(project)
     } catch(error) {
-        res.status(400).json({ message: "Something went wrong" })
+        res.status(400).json({message: "Something went wrong"})
     }
 })
 
 projectRouter.delete("/:id", authenticate, async (req, res) => {
     const id = Number(req.params.id)
     try {
-        const project = await deleteProject(id, req.userId)
-        res.status(200).json({ message: "Project deleted" })
+        await deleteProject(id, req.userId)
+        res.status(200).json({message: "Project deleted"})
     } catch (error) {
-        res.status(400).json({ message: "Something went wrong" })
+        res.status(400).json({message: "Something went wrong"})
     }
 })
 
