@@ -3,6 +3,8 @@ import cors from "cors";
 import dotenv from "dotenv";
 import authRouter from "./routes/auth.route";
 import projectRouter from "./routes/project.route";
+import memberRouter from "./routes/member.route";
+import inviteRouter from "./routes/invite.route";
 
 dotenv.config()
 
@@ -13,6 +15,8 @@ app.use(express.json())
 
 app.use("/auth", authRouter)
 app.use("/projects", projectRouter)
+app.use("/projects/:id", memberRouter)
+app.use("/invites", inviteRouter)
 
 const PORT = process.env.PORT || 3001
 
