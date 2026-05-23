@@ -1,14 +1,9 @@
 import { Router } from "express";
-import { z } from "zod"
 import { getMe, login, register } from "../services/auth.service";
 import { authenticate } from "../middlewares/auth";
+import { authSchema } from "../schemas/auth.schema"
 
 const authRouter = Router()
-
-const authSchema = z.object({
-    email: z.email(),
-    password: z.string().min(8)
-})
 
 authRouter.post("/register", async (req, res) => {
     try {
