@@ -1,3 +1,4 @@
+import { findMember } from "../repositories/member.repository"
 import { create, deleteById, findAllByUserId, findById, update } from "../repositories/project.repository"
 import { CreateProjectData, UpdateProjectData } from "../schemas/project.schema"
 
@@ -5,10 +6,14 @@ export const getProjects = async (userId: number) => {
     return await findAllByUserId(userId)
 }
 
-export const getProject = async (id: number) => {
+export const getProject = async (id: number, userId: number) => {
     const project = await findById(id)
     if (!project) {
         throw new Error("Project not found")
+    }
+    const isMember = await findMember(id, userId)
+    if (!isMember) {
+        throw new Error("Unauthorized")
     }
     return project
 }

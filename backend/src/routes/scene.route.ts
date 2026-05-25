@@ -54,8 +54,8 @@ sceneRouter.post("/:sceneId/links", authenticate, async (req, res) => {
     const sceneId = Number(req.params.sceneId)
     try {
         const body = createSceneLinkSchema.parse(req.body)
-        const scenelink = await addSceneLink(projectId, sceneId, body)
-        res.status(201).json(scenelink)
+        const sceneLink = await addSceneLink(projectId, sceneId, body)
+        res.status(201).json(sceneLink)
     } catch(error) {
         res.status(400).json({message:"Something went wrong"})
     }

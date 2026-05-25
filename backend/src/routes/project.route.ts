@@ -27,7 +27,7 @@ projectRouter.post("/", authenticate, async (req, res) => {
 projectRouter.get("/:id", authenticate, async (req, res) => {
     const id = Number(req.params.id)
     try {
-        const project = await getProject(id)
+        const project = await getProject(id, req.userId)
         res.status(200).json(project)
     } catch (error) {
         res.status(400).json({message: "Something went wrong"})

@@ -17,7 +17,7 @@ memberRouter.post("/invite", authenticate, async (req, res) => {
 memberRouter.get("/members", authenticate, async (req, res) => {
     try {
         const projectId = Number(req.params.id)
-        const member = await getMember(projectId)
+        const member = await getMember(projectId, req.userId)
         res.status(200).json(member)
     } catch(error) {
         res.status(400).json({message: "Something went wrong"})

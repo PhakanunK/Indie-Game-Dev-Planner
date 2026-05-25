@@ -1,6 +1,6 @@
 import crypto from "crypto"
 import { create as createInvite, findByToken, markUsed } from "../repositories/invite.repository"
-import { create as createMember, findAllByProjectId, removeById } from "../repositories/member.repository"
+import { create as createMember, findAllByProjectId, findMember, removeById } from "../repositories/member.repository"
 import { findById } from "../repositories/project.repository"
 
 export const generateInvite = async (projectId: number, createdBy: number) => {
@@ -33,7 +33,11 @@ export const acceptInvite = async (token: string, userId: number) => {
     return await createMember(invitation.project_id, userId)
 }
 
-export const getMember = async (projectId: number) => {
+export const getMember = async (projectId: number, userId: number) => {
+    const isMember = await findMember(projectId, userId)
+    if (!isMember) {
+        throw new Error("Unauthorized")
+    }
     return await findAllByProjectId(projectId)
 }
 

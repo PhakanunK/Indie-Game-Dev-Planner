@@ -20,3 +20,11 @@ export const create = (projectId: number, userId: number) => {
         }
     })
 }
+
+export const findMember = (projectId: number, userId: number) => {
+    return prisma.projectMember.findUnique({
+        where: {
+            project_id_user_id: {project_id: projectId, user_id: userId}
+        }
+    })
+}
