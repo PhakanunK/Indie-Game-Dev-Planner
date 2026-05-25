@@ -115,9 +115,9 @@ model Scene {
 model SceneLink {
   id            Int     @id @default(autoincrement())
   from_scene_id Int
-  from_scene    Scene   @relation("FromScene", fields: [from_scene_id], references: [id])
+  from_scene    Scene   @relation("FromScene", fields: [from_scene_id], references: [id], onDelete: Cascade)
   to_scene_id   Int
-  to_scene      Scene   @relation("ToScene", fields: [to_scene_id], references: [id])
+  to_scene      Scene   @relation("ToScene", fields: [to_scene_id], references: [id], onDelete: Cascade)
   label         String?
 
   @@unique([from_scene_id, to_scene_id])
