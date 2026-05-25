@@ -5,6 +5,7 @@ import authRouter from "./routes/auth.route";
 import projectRouter from "./routes/project.route";
 import memberRouter from "./routes/member.route";
 import inviteRouter from "./routes/invite.route";
+import taskRouter from "./routes/task.route";
 
 dotenv.config()
 
@@ -17,6 +18,7 @@ app.use("/auth", authRouter)
 app.use("/projects", projectRouter)
 app.use("/projects/:id", memberRouter)
 app.use("/invites", inviteRouter)
+app.use("/projects/:id/tasks", taskRouter)
 
 const PORT = process.env.PORT || 3001
 
