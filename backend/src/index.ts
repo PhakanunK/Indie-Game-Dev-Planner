@@ -1,3 +1,6 @@
+import { createServer } from "http";
+import { Server } from "socket.io";
+import { initSockets } from "./sockets";
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -12,6 +15,11 @@ dotenv.config()
 
 const app = express()
 
+const httpServer = createServer(app)
+const io = new Server(httpServer, {
+    cors: {origin: process.env.FRONTEND_URL}
+})
+
 app.use(cors())
 app.use(express.json())
 
@@ -22,9 +30,11 @@ app.use("/invites", inviteRouter)
 app.use("/projects/:id/tasks", taskRouter)
 app.use("/projects/:id/scenes", sceneRouter)
 
+initSockets(io)
+
 const PORT = process.env.PORT || 3001
 
-app.listen(PORT, () => {
+httpServer.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })
 
