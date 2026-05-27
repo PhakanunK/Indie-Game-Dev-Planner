@@ -7,7 +7,7 @@ const activityRouter = Router({mergeParams: true})
 activityRouter.get("/", authenticate, async (req, res) => {
     const projectId = Number(req.params.id)
     try {
-        const activity = await getActivities(projectId)
+        const activity = await getActivities(projectId, req.userId)
         res.status(200).json(activity)
     } catch (error) {
         res.status(400).json({message:"Something went wrong"})
