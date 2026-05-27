@@ -1,27 +1,37 @@
 import { create, createLink, deleteById, deleteLink, findAllByProjectId, findById, update } from "../repositories/scene.repository"
 import { CreateSceneData, CreateSceneLinkData, UpdateSceneData } from "../schemas/scene.schema"
+import { emitSceneUpdated } from "../sockets/emitter"
+import { logActivity } from "./activity.service"
 
 export const getScenes = async (projectId: number) => {
     return await findAllByProjectId(projectId)
 }
 
 export const createScene = async (projectId: number, ownerId: number, data: CreateSceneData) => {
-    return await create(projectId, ownerId, data)
+    const scene = await create(projectId, ownerId, data)
+    emitSceneUpdated(projectId, scene, "created")
+    await logActivity(projectId, ownerId, `created scene '${scene.title}'`, "scene", scene.id)
+    return scene
 }
 
-export const updateScene = async (projectId: number, id: number, data: UpdateSceneData) => {
+export const updateScene = async (projectId: number, userId: number, id: number, data: UpdateSceneData) => {
     const scene = await findById(id)
     if (!scene || scene.project_id !== projectId) {
         throw new Error("Scene not found")
     }
-    return await update(id, data)
+    const updated = await update(id, data)
+    emitSceneUpdated(projectId, updated, "updated")
+    await logActivity(projectId, userId, `updated scene '${scene.title}'`, "scene", scene.id)
+    return updated
 }
 
-export const deleteScene = async (projectId: number, id: number) => {
+export const deleteScene = async (projectId: number, userId: number, id: number) => {
     const scene = await findById(id)
     if (!scene || scene.project_id !== projectId) {
         throw new Error("Scene not found")
     }
+    emitSceneUpdated(projectId, scene, "deleted")
+    await logActivity(projectId, userId, `deleted scene '${scene.title}'`, "scene", scene.id)
     return await deleteById(id)
 }
 

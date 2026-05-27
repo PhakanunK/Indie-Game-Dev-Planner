@@ -10,6 +10,8 @@ import memberRouter from "./routes/member.route";
 import inviteRouter from "./routes/invite.route";
 import taskRouter from "./routes/task.route";
 import sceneRouter from "./routes/scene.route";
+import { initEmitter } from "./sockets/emitter";
+import activityRouter from "./routes/activity.route";
 
 dotenv.config()
 
@@ -29,8 +31,10 @@ app.use("/projects/:id", memberRouter)
 app.use("/invites", inviteRouter)
 app.use("/projects/:id/tasks", taskRouter)
 app.use("/projects/:id/scenes", sceneRouter)
+app.use("/projects/:id/activities", activityRouter)
 
 initSockets(io)
+initEmitter(io)
 
 const PORT = process.env.PORT || 3001
 

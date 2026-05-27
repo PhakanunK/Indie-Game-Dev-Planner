@@ -33,7 +33,7 @@ export const acceptInvite = async (token: string, userId: number) => {
     return await createMember(invitation.project_id, userId)
 }
 
-export const getMember = async (projectId: number, userId: number) => {
+export const getMembers = async (projectId: number, userId: number) => {
     const isMember = await findMember(projectId, userId)
     if (!isMember) {
         throw new Error("Unauthorized")
