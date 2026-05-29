@@ -1,3 +1,21 @@
+"use client"
+
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 export default function Project() {
-    return <div>project</div>
+    return (
+        <div>
+            <Tabs defaultValue="tasks">
+                <TabsList>
+                    <TabsTrigger value="tasks">Tasks</TabsTrigger>
+                    <TabsTrigger value="scenes">Scenes</TabsTrigger>
+                    <TabsTrigger value="activity">Activity</TabsTrigger>
+                </TabsList>
+                <TabsContent value="tasks">Tasks go here</TabsContent>
+                <TabsContent value="scenes">Scenes go here</TabsContent>
+                <TabsContent value="activity">Activity go here</TabsContent>
+            </Tabs>
+            <div>Online Members</div>
+        </div>
+    )
 }
