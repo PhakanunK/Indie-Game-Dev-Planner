@@ -1,8 +1,22 @@
 "use client"
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAuth } from "@/contexts/auth";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function Project() {
+    const {token, isLoading} = useAuth()
+    const router = useRouter()
+    useEffect(() => {
+        if (!isLoading && !token) {
+            router.replace("/login")
+        }
+    }, [token, isLoading])
+    if (isLoading || !token) {
+        return null
+    }
+    
     return (
         <div>
             <Tabs defaultValue="tasks">

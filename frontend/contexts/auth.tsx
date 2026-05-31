@@ -1,13 +1,14 @@
 "use client"
 
 import { User } from "@/lib/models/user.model"
-import React, { createContext, useContext, useState } from "react"
+import React, { createContext, useContext, useEffect, useState } from "react"
 
 interface AuthContextType {
     user: User | null
     token: string | null
     login: (token: string, user: User) => void
     logout: () => void
+    isLoading: boolean
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)
@@ -15,15 +16,25 @@ const AuthContext = createContext<AuthContextType | null>(null)
 export function AuthProvider({children}: {children: React.ReactNode}) {
     const [user, setUser] = useState<User | null>(null)
     const [token, setToken] = useState<string | null>(null)
+    const [isLoading, setIsLoading] = useState(true)
+    useEffect(() => {
+        const saved = localStorage.getItem("token")
+        if (saved) {
+            setToken(saved)
+        }
+        setIsLoading(false)
+    }, [])
     const login = (token: string, user: User) => {
+        localStorage.setItem("token", token)
         setUser(user)
         setToken(token)
     }
     const logout = () => {
+        localStorage.removeItem("token")
         setUser(null)
         setToken(null)
     }
-    return <AuthContext.Provider value={{user, token, login, logout}}>{children}</AuthContext.Provider>
+    return <AuthContext.Provider value={{user, token, login, logout, isLoading}}>{children}</AuthContext.Provider>
 }
 
 export const useAuth = () => {
