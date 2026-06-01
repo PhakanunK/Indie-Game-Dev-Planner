@@ -12,11 +12,11 @@ export const login = async (email: string, password: string): Promise<string> =>
     return await response.json()
 }
 
-export const register = async (email: string, password: string): Promise<void> => {
+export const register = async (email: string, username: string, password: string): Promise<void> => {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({email, password})
+        body: JSON.stringify({email, username, password})
     })
     if (!response.ok) {
         throw new Error("Register failed")

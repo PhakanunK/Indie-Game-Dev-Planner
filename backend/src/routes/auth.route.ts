@@ -1,14 +1,14 @@
 import { Router } from "express";
 import { getMe, login, register } from "../services/auth.service";
 import { authenticate } from "../middlewares/auth";
-import { authSchema } from "../schemas/auth.schema"
+import { loginSchema, registerSchema } from "../schemas/auth.schema";
 
 const authRouter = Router()
 
 authRouter.post("/register", async (req, res) => {
     try {
-        const body = authSchema.parse(req.body)
-        const user = await register(body.email, body.password)
+        const body = registerSchema.parse(req.body)
+        const user = await register(body.email, body.username, body.password)
         res.status(201).json(user)
     } catch (error) {
         res.status(400).json({message: "Registration failed"})
@@ -17,7 +17,7 @@ authRouter.post("/register", async (req, res) => {
 
 authRouter.post("/login", async (req, res) => {
     try {
-        const body = authSchema.parse(req.body)
+        const body = loginSchema.parse(req.body)
         const token = await login(body.email, body.password)
         res.status(200).json(token)
     } catch(error) {

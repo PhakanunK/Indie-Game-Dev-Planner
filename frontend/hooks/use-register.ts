@@ -9,6 +9,7 @@ import { z } from "zod"
 
 const schema = z.object({
     email: z.email(),
+    username: z.string(),
     password: z.string().min(8),
     confirmPassword: z.string()
 }).refine(data => data.password === data.confirmPassword, {
@@ -23,7 +24,7 @@ export const useRegister = () => {
     const router = useRouter()
     const auth = useAuth()
     const onSubmit = async (data: FormData) => {
-        await registerAction(data.email, data.password)
+        await registerAction(data.email, data.username, data.password)
         const token = await loginAction(data.email, data.password)
         const user = await getMeAction(token)
         auth.login(token, user)

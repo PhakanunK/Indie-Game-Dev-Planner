@@ -10,6 +10,9 @@ export default function Register() {
 
     return (
         <form onSubmit={form.handleSubmit(onSubmit)}>
+            <Input {...form.register("username")}/>
+            {form.formState.errors.username && <p>{form.formState.errors.username.message}</p>}
+            
             <Input {...form.register("email")}/>
             {form.formState.errors.email && <p>{form.formState.errors.email.message}</p>}
 
