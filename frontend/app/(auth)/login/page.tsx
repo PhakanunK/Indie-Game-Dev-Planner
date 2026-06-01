@@ -10,10 +10,10 @@ export default function Login() {
 
     return (
         <form onSubmit={form.handleSubmit(onSubmit)}>
-            <Input {...form.register("email")}/>
+            <Input {...form.register("email")} placeholder="Email"/>
             {form.formState.errors.email && <p>{form.formState.errors.email.message}</p>}
 
-            <Input {...form.register("password")} type="password"/>
+            <Input {...form.register("password")} placeholder="Password" type="password"/>
             {form.formState.errors.password && <p>{form.formState.errors.password.message}</p>}
 
             <Button type="submit">Login</Button>
