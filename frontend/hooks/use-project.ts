@@ -1,5 +1,7 @@
 import { useAuth } from "@/contexts/auth";
+import { createScene, getScenes } from "@/lib/actions/scene.actions";
 import { createTask, getTasks } from "@/lib/actions/task.actions";
+import { Scene } from "@/lib/models/scene.model";
 import { Task } from "@/lib/models/task.model";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams } from "next/navigation";
@@ -7,29 +9,48 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-const schema = z.object({
-    title: z.string()
+const taskSchema = z.object({
+    title: z.string(),
+    status: z.enum(["todo", "in_progress", "done"])
 })
 
-type FormData = z.infer<typeof schema>
+type TaskFormData = z.infer<typeof taskSchema>
+
+const sceneSchema = z.object({
+    title: z.string(),
+    type: z.enum(["cutscene", "gameplay", "boss", "dialogue", "other"]),
+    status: z.enum(["planned", "in_progress", "done"])
+})
+
+type SceneFormData = z.infer<typeof sceneSchema>
 
 export const useProject = () => {
-    const form = useForm<FormData>({resolver: zodResolver(schema)})
+    const taskForm = useForm<TaskFormData>({resolver: zodResolver(taskSchema)})
+    const sceneForm = useForm<SceneFormData>({resolver: zodResolver(sceneSchema)})
     const {id} = useParams()
     const projectId = Number(id)
     const [tasks, setTasks] = useState<Task[]>([])
+    const [scenes, setScenes] = useState<Scene[]>([])
     const {token} = useAuth()
     useEffect(() => {
         if (token) {
             getTasks(token, projectId).then(setTasks)
+            getScenes(token, projectId).then(setScenes)
         }
     }, [token, projectId])
-    const onSubmit = async (data: FormData) => {
+    const onTaskSubmit = async (data: TaskFormData) => {
             if (!token) {
                 return
             }
             const newTask = await createTask(token, projectId, {...data, order: tasks.length})
             setTasks(prev => [...prev, newTask])
         }
-    return {tasks, form, onSubmit}
+    const onSceneSubmit = async (data: SceneFormData) => {
+            if (!token) {
+                return
+            }
+            const newScene = await createScene(token, projectId, data)
+            setScenes(prev => [...prev, newScene])
+        }
+    return {tasks, taskForm, scenes, sceneForm, onTaskSubmit, onSceneSubmit}
 }
