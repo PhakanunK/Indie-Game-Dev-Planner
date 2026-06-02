@@ -1,6 +1,8 @@
 import { useAuth } from "@/contexts/auth";
+import { getActivities } from "@/lib/actions/activity.actions";
 import { createScene, getScenes } from "@/lib/actions/scene.actions";
 import { createTask, getTasks } from "@/lib/actions/task.actions";
+import { Activity } from "@/lib/models/activity.model";
 import { Scene } from "@/lib/models/scene.model";
 import { Task } from "@/lib/models/task.model";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -31,11 +33,13 @@ export const useProject = () => {
     const projectId = Number(id)
     const [tasks, setTasks] = useState<Task[]>([])
     const [scenes, setScenes] = useState<Scene[]>([])
+    const [activities, setActivities] = useState<Activity[]>([])
     const {token} = useAuth()
     useEffect(() => {
         if (token) {
             getTasks(token, projectId).then(setTasks)
             getScenes(token, projectId).then(setScenes)
+            getActivities(token, projectId).then(setActivities)
         }
     }, [token, projectId])
     const onTaskSubmit = async (data: TaskFormData) => {
@@ -52,5 +56,5 @@ export const useProject = () => {
             const newScene = await createScene(token, projectId, data)
             setScenes(prev => [...prev, newScene])
         }
-    return {tasks, taskForm, scenes, sceneForm, onTaskSubmit, onSceneSubmit}
+    return {tasks, taskForm, scenes, sceneForm, onTaskSubmit, onSceneSubmit, activities}
 }

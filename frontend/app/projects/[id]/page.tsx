@@ -15,7 +15,7 @@ import { useEffect } from "react";
 export default function Project() {
     const { token, isLoading } = useAuth()
     const router = useRouter()
-    const { tasks, taskForm, onTaskSubmit, scenes, sceneForm, onSceneSubmit } = useProject()
+    const { tasks, taskForm, onTaskSubmit, scenes, sceneForm, onSceneSubmit, activities} = useProject()
     useEffect(() => {
         if (!isLoading && !token) {
             router.replace("/login")
@@ -131,7 +131,21 @@ export default function Project() {
                     </Dialog>
                 </TabsContent>
 
-                <TabsContent value="activity">Activity go here</TabsContent>
+                <TabsContent value="activity">
+                    {activities.map((activity) => (
+                        <div key={activity.id}>
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>{activity.action}</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <p>{activity.entity_type}</p>
+                                    <p>{activity.created_at}</p>
+                                </CardContent>
+                            </Card>
+                        </div>
+                    ))}
+                </TabsContent>
             </Tabs>
             <div>Online Members</div>
         </div>
