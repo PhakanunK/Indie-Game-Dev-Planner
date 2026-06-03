@@ -60,7 +60,7 @@ export default function Project() {
                                 <Input {...taskForm.register("title")} placeholder="Task title" />
                                 {taskForm.formState.errors.title && <p>{taskForm.formState.errors.title.message}</p>}
 
-                                <Select onValueChange={(value) => taskForm.setValue("status", value as any)}>
+                                <Select onValueChange={(value) => taskForm.setValue("status", value as typeof TASK_STATUSES[number])}>
                                     <SelectTrigger>
                                         <SelectValue placeholder="Task status" />
                                     </SelectTrigger>
@@ -103,7 +103,7 @@ export default function Project() {
                                 <Input {...sceneForm.register("title")} placeholder="Scene title" />
                                 {sceneForm.formState.errors.title && <p>{sceneForm.formState.errors.title.message}</p>}
 
-                                <Select onValueChange={(value) => sceneForm.setValue("type", value as any)}>
+                                <Select onValueChange={(value) => sceneForm.setValue("type", value as typeof SCENE_TYPES[number])}>
                                     <SelectTrigger>
                                         <SelectValue placeholder="Scene type" />
                                     </SelectTrigger>
@@ -114,7 +114,7 @@ export default function Project() {
                                     </SelectContent>
                                 </Select>
 
-                                <Select onValueChange={(value) => sceneForm.setValue("status", value as any)}>
+                                <Select onValueChange={(value) => sceneForm.setValue("status", value as typeof SCENE_STATUSES[number])}>
                                     <SelectTrigger>
                                         <SelectValue placeholder="Scene status" />
                                     </SelectTrigger>

@@ -26,7 +26,7 @@ export const register = async (email: string, username: string, password: string
 export const getMe = async (token: string): Promise<User> => {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
         method: "GET",
-        headers: {"Authorization": `Bearer ${token}`, },
+        headers: {"Authorization": `Bearer ${token}`},
     })
     if (!response.ok) {
         throw new Error("Failed to get user")

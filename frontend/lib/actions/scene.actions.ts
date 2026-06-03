@@ -3,7 +3,7 @@ import { Scene } from "../models/scene.model";
 export const getScenes = async (token: string, projectId: number): Promise<Scene[]> => {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/projects/${projectId}/scenes`, {
         method: "GET",
-        headers: {"Authorization": `Bearer ${token}`, },
+        headers: {"Authorization": `Bearer ${token}`},
     })
     if (!response.ok) {
         throw new Error("Failed to get scenes")
@@ -21,8 +21,9 @@ export const createScene = async (token: string, projectId: number, data: {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/projects/${projectId}/scenes`, {
         method: "POST",
         headers: {
-            "Authorization": `Bearer ${token}`, 
-            "Content-Type": "application/json"},
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+        },
         body: JSON.stringify(data)
     })
     if (!response.ok) {
@@ -41,8 +42,9 @@ export const updateScene = async (token: string, projectId: number, sceneId: num
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/projects/${projectId}/scenes/${sceneId}`, {
         method: "PATCH",
         headers: {
-            "Authorization": `Bearer ${token}`, 
-            "Content-Type": "application/json"},
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+        },
         body: JSON.stringify(data)
     })
     if (!response.ok) {
@@ -54,9 +56,9 @@ export const updateScene = async (token: string, projectId: number, sceneId: num
 export const deleteScene = async (token: string, projectId: number, sceneId: number): Promise<void> => {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/projects/${projectId}/scenes/${sceneId}`, {
         method: "DELETE",
-        headers: {"Authorization": `Bearer ${token}`, },
+        headers: {"Authorization": `Bearer ${token}`},
     })
     if (!response.ok) {
-        throw new Error("Failed to delete scenes")
+        throw new Error("Failed to delete scene")
     }
 }

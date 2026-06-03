@@ -9,7 +9,7 @@ import { z } from "zod"
 
 const schema = z.object({
     email: z.email(),
-    username: z.string(),
+    username: z.string().min(1),
     password: z.string().min(8),
     confirmPassword: z.string()
 }).refine(data => data.password === data.confirmPassword, {

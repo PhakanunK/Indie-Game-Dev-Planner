@@ -13,14 +13,14 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const taskSchema = z.object({
-    title: z.string(),
+    title: z.string().min(1),
     status: z.enum(["todo", "in_progress", "done"])
 })
 
 type TaskFormData = z.infer<typeof taskSchema>
 
 const sceneSchema = z.object({
-    title: z.string(),
+    title: z.string().min(1),
     type: z.enum(["cutscene", "gameplay", "boss", "dialogue", "other"]),
     status: z.enum(["planned", "in_progress", "done"])
 })
@@ -83,13 +83,13 @@ export const useProject = () => {
             if (!token) {
                 return
             }
-            const newTask = await createTask(token, projectId, {...data, order: tasks.length})
+            await createTask(token, projectId, {...data, order: tasks.length})
         }
     const onSceneSubmit = async (data: SceneFormData) => {
             if (!token) {
                 return
             }
-            const newScene = await createScene(token, projectId, data)
+            await createScene(token, projectId, data)
         }
     return {tasks, taskForm, scenes, sceneForm, onTaskSubmit, onSceneSubmit, activities}
 }

@@ -3,7 +3,7 @@ import { Task } from "../models/task.model";
 export const getTasks = async (token: string, projectId: number): Promise<Task[]> => {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/projects/${projectId}/tasks`, {
         method: "GET",
-        headers: {"Authorization": `Bearer ${token}`, },
+        headers: {"Authorization": `Bearer ${token}`},
     })
     if (!response.ok) {
         throw new Error("Failed to get tasks")
@@ -20,8 +20,9 @@ export const createTask = async (token: string, projectId: number, data: {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/projects/${projectId}/tasks`, {
         method: "POST",
         headers: {
-            "Authorization": `Bearer ${token}`, 
-            "Content-Type": "application/json"},
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+        },
         body: JSON.stringify(data)
     })
     if (!response.ok) {
@@ -39,8 +40,9 @@ export const updateTask = async (token: string, projectId: number, taskId: numbe
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/projects/${projectId}/tasks/${taskId}`, {
         method: "PATCH",
         headers: {
-            "Authorization": `Bearer ${token}`, 
-            "Content-Type": "application/json"},
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+        },
         body: JSON.stringify(data)
     })
     if (!response.ok) {
@@ -52,9 +54,9 @@ export const updateTask = async (token: string, projectId: number, taskId: numbe
 export const deleteTask = async (token: string, projectId: number, taskId: number): Promise<void> => {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/projects/${projectId}/tasks/${taskId}`, {
         method: "DELETE",
-        headers: {"Authorization": `Bearer ${token}`, },
+        headers: {"Authorization": `Bearer ${token}`},
     })
     if (!response.ok) {
-        throw new Error("Failed to delete tasks")
+        throw new Error("Failed to delete task")
     }
 }

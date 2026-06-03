@@ -9,10 +9,10 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 
 const schema = z.object({
-    name: z.string(),
-    genre: z.string(),
-    engine: z.string(),
-    platform: z.string(),
+    name: z.string().min(1),
+    genre: z.string().min(1),
+    engine: z.string().min(1),
+    platform: z.string().min(1),
     description: z.string().optional()
 })
 

@@ -3,7 +3,7 @@ import { Project } from "../models/project.model";
 export const getProjects = async (token: string): Promise<Project[]> => {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/projects`, {
         method: "GET",
-        headers: {"Authorization": `Bearer ${token}`, },
+        headers: {"Authorization": `Bearer ${token}`},
     })
     if (!response.ok) {
         throw new Error("Failed to get projects")
@@ -21,8 +21,9 @@ export const createProject = async (token: string, data: {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/projects`, {
         method: "POST",
         headers: {
-            "Authorization": `Bearer ${token}`, 
-            "Content-Type": "application/json"},
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+        },
         body: JSON.stringify(data)
     })
     if (!response.ok) {
@@ -41,8 +42,9 @@ export const updateProject = async (token: string, projectId: number, data: {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/projects/${projectId}`, {
         method: "PATCH",
         headers: {
-            "Authorization": `Bearer ${token}`, 
-            "Content-Type": "application/json"},
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+        },
         body: JSON.stringify(data)
     })
     if (!response.ok) {
@@ -54,7 +56,7 @@ export const updateProject = async (token: string, projectId: number, data: {
 export const deleteProject = async (token: string, projectId: number): Promise<void> => {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/projects/${projectId}`, {
         method: "DELETE",
-        headers: {"Authorization": `Bearer ${token}`, },
+        headers: {"Authorization": `Bearer ${token}`},
     })
     if (!response.ok) {
         throw new Error("Failed to delete project")
@@ -64,7 +66,7 @@ export const deleteProject = async (token: string, projectId: number): Promise<v
 export const getProject = async (token: string, projectId: number): Promise<Project> => {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/projects/${projectId}`, {
         method: "GET",
-        headers: {"Authorization": `Bearer ${token}`, },
+        headers: {"Authorization": `Bearer ${token}`},
     })
     if (!response.ok) {
         throw new Error("Failed to get a project")
