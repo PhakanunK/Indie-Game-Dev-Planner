@@ -65,7 +65,8 @@ export default function ScenesTab({ scenes, form, onSubmit}: ScenesTabProps) {
                                         ))}
                                     </SelectContent>
                                 </Select>
-
+                                
+                                {form.formState.errors.root && <p>{form.formState.errors.root.message}</p>}
                                 <Button type="submit">Create</Button>
                             </form>
                         </DialogContent>

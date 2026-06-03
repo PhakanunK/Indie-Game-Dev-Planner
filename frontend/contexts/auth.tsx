@@ -1,5 +1,6 @@
 "use client"
 
+import { getMe } from "@/lib/actions/auth.actions"
 import { User } from "@/lib/models/user.model"
 import socket from "@/lib/socket"
 import React, { createContext, useContext, useEffect, useState } from "react"
@@ -24,8 +25,11 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
             setToken(saved)
             socket.connect()
             socket.emit("auth", {token: saved})
+            getMe(saved).then(setUser).finally(() => setIsLoading(false))
         }
-        setIsLoading(false)
+        else {
+            setIsLoading(false)
+        }
     }, [])
     const login = (token: string, user: User) => {
         localStorage.setItem("token", token)

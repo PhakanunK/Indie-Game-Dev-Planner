@@ -19,20 +19,25 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>
 
 export const useDashboard = () => {
-    const form = useForm<FormData>({resolver: zodResolver(schema)})
+    const form = useForm<FormData>({ resolver: zodResolver(schema) })
     const [projects, setProjects] = useState<Project[]>([])
-    const {token} = useAuth()
+    const { token } = useAuth()
     useEffect(() => {
         if (token) {
             getProjects(token).then(setProjects)
-        }  
+        }
     }, [token])
     const onSubmit = async (data: FormData) => {
-        if (!token) {
-            return
+        try {
+            if (!token) {
+                return
+            }
+            const newProject = await createProject(token, data)
+            setProjects(prev => [...prev, newProject])
+        } catch {
+            form.setError("root", { message: "Failed to create project" })
         }
-        const newProject = await createProject(token, data)
-        setProjects(prev => [...prev, newProject])
+
     }
-    return {projects, form, onSubmit}
+    return { projects, form, onSubmit }
 }

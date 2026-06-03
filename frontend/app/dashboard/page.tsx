@@ -65,6 +65,7 @@ export default function Dashboard() {
                         <Input {...form.register("description")} placeholder="Description"/>
                         {form.formState.errors.description && <p>{form.formState.errors.description.message}</p>}
 
+                        {form.formState.errors.root && <p>{form.formState.errors.root.message}</p>}
                         <Button type="submit">Create</Button>
                     </form>
                 </DialogContent>

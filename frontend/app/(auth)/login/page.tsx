@@ -16,6 +16,7 @@ export default function Login() {
             <Input {...form.register("password")} placeholder="Password" type="password"/>
             {form.formState.errors.password && <p>{form.formState.errors.password.message}</p>}
 
+            {form.formState.errors.root && <p>{form.formState.errors.root.message}</p>}
             <Button type="submit">Login</Button>
             <Link href="/register">Don't have an account?</Link>
         </form>

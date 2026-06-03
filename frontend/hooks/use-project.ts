@@ -1,3 +1,5 @@
+"use client"
+
 import { useAuth } from "@/contexts/auth";
 import socket from "@/lib/socket";
 import { useParams } from "next/navigation";
@@ -27,11 +29,12 @@ export const useProject = () => {
         }
     }, [token, projectId])
     useEffect(() => {
-        socket.on("user:presence", (data) => {
+        const handler = (data: {onlineUserIds: number[]}) => {
             setOnlineUserIds(data.onlineUserIds)
-        })
+        }
+        socket.on("user:presence", handler)
         return () => {
-            socket.off("user:presence")
+            socket.off("user:presence", handler)
         }
     }, [])
     const tasks = useTasks(projectId, token ?? "")

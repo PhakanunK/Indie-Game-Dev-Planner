@@ -1,3 +1,5 @@
+"use client"
+
 import { getActivities } from "@/lib/actions/activity.actions"
 import { Activity } from "@/lib/models/activity.model"
 import socket from "@/lib/socket"
@@ -11,11 +13,12 @@ export const useActivities = (projectId: number, token: string) => {
             }
         }, [token, projectId])
     useEffect (() => {
-        socket.on("activity:new", (data) => {
+        const handler = (data: {activity: Activity}) => {
             setActivities(prev => [data.activity, ...prev])
-        })
+        }
+        socket.on("activity:new", handler)
         return () => {
-            socket.off("activity:new")
+            socket.off("activity:new", handler)
         }
     }, [])
     return activities

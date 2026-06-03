@@ -55,6 +55,7 @@ export default function TasksTab({ tasks, form, onSubmit}: TasksTabProps) {
                                     </SelectContent>
                                 </Select>
 
+                                {form.formState.errors.root && <p>{form.formState.errors.root.message}</p>}
                                 <Button type="submit">Create</Button>
                             </form>
                         </DialogContent>

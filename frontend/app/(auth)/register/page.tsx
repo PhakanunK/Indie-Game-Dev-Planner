@@ -22,6 +22,7 @@ export default function Register() {
             <Input {...form.register("confirmPassword")} placeholder="Confirm password" type="password"/>
             {form.formState.errors.confirmPassword && <p>{form.formState.errors.confirmPassword.message}</p>}
 
+            {form.formState.errors.root && <p>{form.formState.errors.root.message}</p>}
             <Button type="submit">Register</Button>
             <Link href="/login">Already have an account?</Link>
         </form>
