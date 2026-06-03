@@ -1,6 +1,7 @@
 "use client"
 
 import { User } from "@/lib/models/user.model"
+import socket from "@/lib/socket"
 import React, { createContext, useContext, useEffect, useState } from "react"
 
 interface AuthContextType {
@@ -21,6 +22,8 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
         const saved = localStorage.getItem("token")
         if (saved) {
             setToken(saved)
+            socket.connect()
+            socket.emit("auth", {token: saved})
         }
         setIsLoading(false)
     }, [])
@@ -28,11 +31,14 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
         localStorage.setItem("token", token)
         setUser(user)
         setToken(token)
+        socket.connect()
+        socket.emit("auth", {token})
     }
     const logout = () => {
         localStorage.removeItem("token")
         setUser(null)
         setToken(null)
+        socket.disconnect()
     }
     return <AuthContext.Provider value={{user, token, login, logout, isLoading}}>{children}</AuthContext.Provider>
 }

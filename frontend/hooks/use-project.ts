@@ -5,6 +5,7 @@ import { createTask, getTasks } from "@/lib/actions/task.actions";
 import { Activity } from "@/lib/models/activity.model";
 import { Scene } from "@/lib/models/scene.model";
 import { Task } from "@/lib/models/task.model";
+import socket from "@/lib/socket";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -40,21 +41,55 @@ export const useProject = () => {
             getTasks(token, projectId).then(setTasks)
             getScenes(token, projectId).then(setScenes)
             getActivities(token, projectId).then(setActivities)
+            socket.emit("project:join", {projectId})
+            return () => {
+                socket.emit("project:leave", {projectId})
+            }
         }
     }, [token, projectId])
+    useEffect (() => {
+        socket.on("task:updated", (data) => {
+            if (data.action === "created") {
+                setTasks(prev => [...prev, data.task])
+            }
+            else if (data.action === "updated") {
+                setTasks(prev => prev.map(t => t.id === data.task.id ? data.task: t))
+            }
+            else if (data.action === "deleted") {
+                setTasks(prev => prev.filter(t => t.id !== data.task.id))
+            }
+        })
+        socket.on("scene:updated", (data) => {
+            if (data.action === "created") {
+                setScenes(prev => [...prev, data.scene])
+            }
+            else if (data.action === "updated") {
+                setScenes(prev => prev.map(s => s.id === data.scene.id ? data.scene: s))
+            }
+            else if (data.action === "deleted") {
+                setScenes(prev => prev.filter(s => s.id !== data.scene.id))
+            }
+        })
+        socket.on("activity:new", (data) => {
+            setActivities(prev => [data.activity, ...prev])
+        })
+        return () => {
+            socket.off("task:updated")
+            socket.off("scene:updated")
+            socket.off("activity:new")
+        }
+    }, [])
     const onTaskSubmit = async (data: TaskFormData) => {
             if (!token) {
                 return
             }
             const newTask = await createTask(token, projectId, {...data, order: tasks.length})
-            setTasks(prev => [...prev, newTask])
         }
     const onSceneSubmit = async (data: SceneFormData) => {
             if (!token) {
                 return
             }
             const newScene = await createScene(token, projectId, data)
-            setScenes(prev => [...prev, newScene])
         }
     return {tasks, taskForm, scenes, sceneForm, onTaskSubmit, onSceneSubmit, activities}
 }
