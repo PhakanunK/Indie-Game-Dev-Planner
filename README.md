@@ -37,9 +37,9 @@ A real-time collaborative planning tool for indie game development teams. Built 
 | Phase 1 — Schema + API design | ✅ Complete |
 | Phase 2 — Backend core (auth, projects, tasks, scenes) | ✅ Complete |
 | Phase 3 — Socket.io + activity feed | ✅ Complete |
-| Phase 4 — Frontend skeleton | 🔄 In progress |
-| Phase 5 — Frontend wired up | ⏳ Upcoming |
-| Phase 6 — Polish + error handling | ⏳ Upcoming |
+| Phase 4 — Frontend skeleton | ✅ Complete |
+| Phase 5 — Frontend wired up | ✅ Complete |
+| Phase 6 — Polish + error handling | 🔄 In progress |
 
 ---
 
