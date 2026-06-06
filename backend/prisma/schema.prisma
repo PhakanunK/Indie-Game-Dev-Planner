@@ -76,17 +76,18 @@ model InviteToken {
 }
 
 model Task {
-  id            Int        @id @default(autoincrement())
+  id            Int          @id @default(autoincrement())
   project_id    Int
-  project       Project    @relation(fields: [project_id], references: [id], onDelete: Cascade)
+  project       Project      @relation(fields: [project_id], references: [id], onDelete: Cascade)
   created_by_id Int
-  created_by    User       @relation(fields: [created_by_id], references: [id])
+  created_by    User         @relation(fields: [created_by_id], references: [id])
   title         String
-  status        TaskStatus @default(todo)
+  status        TaskStatus   @default(todo)
+  priority      TaskPriority @default(medium)
   due_date      DateTime?
   order         Int
-  created_at    DateTime   @default(now())
-  updated_at    DateTime   @updatedAt
+  created_at    DateTime     @default(now())
+  updated_at    DateTime     @updatedAt
   deleted_at    DateTime?
 
   @@index([project_id, status])
@@ -149,6 +150,12 @@ enum TaskStatus {
   todo
   in_progress
   done
+}
+
+enum TaskPriority {
+  low
+  medium
+  high
 }
 
 enum SceneType {
