@@ -23,7 +23,7 @@ export default function Project() {
     }
 
     return (
-        <div>
+        <div className="p-6">
             <Tabs defaultValue="tasks">
                 <TabsList>
                     <TabsTrigger value="tasks">Tasks</TabsTrigger>

@@ -6,13 +6,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input"
 import { useAuth } from "@/contexts/auth"
 import { useDashboard } from "@/hooks/use-dashboard"
-import { Project } from "@/lib/models/project.model"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect} from "react"
 
 export default function Dashboard() {
-    const {token, logout, isLoading} = useAuth()
+    const {token, isLoading} = useAuth()
     const router = useRouter()
     const {projects, form, onSubmit} = useDashboard()
     useEffect(() => {
@@ -25,8 +24,7 @@ export default function Dashboard() {
     }
 
     return (
-        <div>
-            <Button onClick={() => {logout(); router.replace("/login")}}>Logout</Button>
+        <div className="p-6">
             {projects.map((project) => (
                 <div key={project.id}>
                     <Link href={`/projects/${project.id}`}>
