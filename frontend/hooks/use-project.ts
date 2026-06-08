@@ -7,14 +7,18 @@ import { useEffect, useState } from "react";
 import { useTasks } from "./use-tasks";
 import { useScenes } from "./use-scenes";
 import { useActivities } from "./use-activities";
+import { Member } from "@/lib/models/member.model";
+import { getMembers } from "@/lib/actions/member.actions";
 
 export const useProject = () => {
     const {id} = useParams()
     const projectId = Number(id)
     const {token} = useAuth()
     const [onlineUserIds, setOnlineUserIds] = useState<number[]>([])
+    const [members, setMembers] = useState<Member[]>([])
     useEffect(() => {
         if (token) {
+            getMembers(token, projectId).then(setMembers)
             if (socket.connected) {
                 socket.emit("project:join", {projectId})
             }
@@ -40,5 +44,5 @@ export const useProject = () => {
     const tasks = useTasks(projectId, token ?? "")
     const scenes = useScenes(projectId, token ?? "")
     const activities = useActivities(projectId, token ?? "")
-    return {...tasks, ...scenes, activities, onlineUserIds}
+    return {...tasks, ...scenes, activities, onlineUserIds, members}
 }
