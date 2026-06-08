@@ -1,8 +1,9 @@
 "use client"
 
-import { createTask, getTasks } from "@/lib/actions/task.actions";
+import { createTask, deleteTask, getTasks, updateTask } from "@/lib/actions/task.actions";
 import { Task } from "@/lib/models/task.model";
 import socket from "@/lib/socket";
+import { TASK_STATUSES } from "@/lib/utils/constants";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -10,7 +11,7 @@ import { z } from "zod";
 
 const taskSchema = z.object({
     title: z.string().min(1),
-    status: z.enum(["todo", "in_progress", "done"])
+    status: z.enum(TASK_STATUSES)
 })
 
 type TaskFormData = z.infer<typeof taskSchema>
@@ -40,6 +41,7 @@ export const useTasks = (projectId: number, token: string) => {
             socket.off("task:updated", handler)
         }
     }, [])
+
     const onTaskSubmit = async (data: TaskFormData) => {
         try {
             if (!token) {
@@ -50,5 +52,31 @@ export const useTasks = (projectId: number, token: string) => {
             taskForm.setError("root", { message: "Failed to create task" })
         }
     }
-    return { tasks, taskForm, onTaskSubmit }
+
+    const onTaskUpdate = async (taskId: number, data: {
+        title?: string
+        status?: typeof TASK_STATUSES[number]
+    }) => {
+        try {
+            if (!token) {
+                return
+            }
+            await updateTask(token, projectId, taskId, data)
+        } catch {
+
+        }
+    }
+
+    const onTaskDelete = async (taskId: number) => {
+        try {
+            if (!token) {
+                return
+            }
+            await deleteTask(token, projectId, taskId)
+        } catch {
+            
+        }
+    }
+
+    return { tasks, taskForm, onTaskSubmit, onTaskUpdate, onTaskDelete }
 }
