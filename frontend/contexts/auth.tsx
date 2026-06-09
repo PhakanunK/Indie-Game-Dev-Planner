@@ -25,7 +25,14 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
             setToken(saved)
             socket.connect()
             socket.emit("auth", {token: saved})
-            getMe(saved).then(setUser).finally(() => setIsLoading(false))
+            getMe(saved)
+            .then(setUser)
+            .catch(() => {
+                localStorage.removeItem("token")
+                setToken(null)
+                socket.disconnect()
+            })
+            .finally(() => setIsLoading(false))
         }
         else {
             setIsLoading(false)

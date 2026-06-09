@@ -44,9 +44,7 @@ export const useTasks = (projectId: number, token: string) => {
 
     const onTaskSubmit = async (data: TaskFormData) => {
         try {
-            if (!token) {
-                return
-            }
+            if (!token) return
             await createTask(token, projectId, { ...data, order: tasks.length })
         } catch {
             taskForm.setError("root", { message: "Failed to create task" })
@@ -58,24 +56,19 @@ export const useTasks = (projectId: number, token: string) => {
         status?: typeof TASK_STATUSES[number]
     }) => {
         try {
-            if (!token) {
-                return
-            }
+            if (!token) return
+            setTasks(prev => prev.map(t => t.id === taskId ? { ...t, ...data } : t))
             await updateTask(token, projectId, taskId, data)
         } catch {
-
+            getTasks(token, projectId).then(setTasks)
         }
     }
 
     const onTaskDelete = async (taskId: number) => {
         try {
-            if (!token) {
-                return
-            }
+            if (!token) return
             await deleteTask(token, projectId, taskId)
-        } catch {
-            
-        }
+        } catch {}
     }
 
     return { tasks, taskForm, onTaskSubmit, onTaskUpdate, onTaskDelete }
