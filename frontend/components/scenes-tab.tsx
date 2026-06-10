@@ -1,76 +1,59 @@
 "use client"
 
-import { useScenes } from "@/hooks/use-scenes"
-import { Scene } from "@/lib/models/scene.model"
+import { useState } from "react"
 import { TabsContent } from "./ui/tabs"
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
-import { SCENE_TYPES, SCENE_STATUSES } from "@/lib/utils/constants"
 import { Button } from "./ui/button"
-import { DialogTrigger, DialogContent, DialogHeader, DialogTitle, Dialog } from "./ui/dialog"
-import { Input } from "./ui/input"
-import { SelectTrigger, SelectValue, SelectContent, SelectItem, Select } from "./ui/select"
+import { Scene } from "@/lib/models/scene.model"
+import { useScenes } from "@/hooks/use-scenes"
+import SceneCard from "./scenes/scene-card"
+import SceneDialog from "./scenes/scene-dialog"
+import SceneDeleteDialog from "./scenes/scene-delete-dialog"
 
 type ScenesTabProps = {
     scenes: Scene[]
-    form: ReturnType<typeof useScenes>["sceneForm"]
-    onSubmit: ReturnType<typeof useScenes>["onSceneSubmit"]
+    onSceneCreate: ReturnType<typeof useScenes>["onSceneCreate"]
+    onSceneUpdate: ReturnType<typeof useScenes>["onSceneUpdate"]
+    onSceneDelete: ReturnType<typeof useScenes>["onSceneDelete"]
 }
 
-export default function ScenesTab({ scenes, form, onSubmit}: ScenesTabProps) {
+export default function ScenesTab({ scenes, onSceneCreate, onSceneUpdate, onSceneDelete }: ScenesTabProps) {
+    const [createOpen, setCreateOpen] = useState(false)
+    const [editOpen, setEditOpen] = useState(false)
+    const [deleteOpen, setDeleteOpen] = useState(false)
+    const [selectedScene, setSelectedScene] = useState<Scene | null>(null)
+
     return (
         <TabsContent value="scenes">
-                    {scenes.map((scene) => (
-                        <div key={scene.id}>
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle>{scene.title}</CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <p>{scene.type}</p>
-                                    <p>{scene.status}</p>
-                                </CardContent>
-                            </Card>
-                        </div>
-                    ))}
-                    <Dialog>
-                        <DialogTrigger asChild>
-                            <Button>Create Scene</Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                            <DialogHeader>
-                                <DialogTitle>Create Scene</DialogTitle>
-                            </DialogHeader>
-                            <form onSubmit={form.handleSubmit(onSubmit)}>
-                                <Input {...form.register("title")} placeholder="Scene title" />
-                                {form.formState.errors.title && <p>{form.formState.errors.title.message}</p>}
+            <div className="grid grid-cols-3 gap-4">
+                {scenes.map(scene => (
+                    <SceneCard
+                        key={scene.id}
+                        scene={scene}
+                        onEdit={(s) => { setSelectedScene(s); setEditOpen(true) }}
+                        onDelete={(s) => { setSelectedScene(s); setDeleteOpen(true) }}
+                    />
+                ))}
+            </div>
 
-                                <Select onValueChange={(value) => form.setValue("type", value as typeof SCENE_TYPES[number])}>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Scene type" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {SCENE_TYPES.map((type) => (
-                                            <SelectItem key={type} value={type}>{type}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+            <Button className="mt-4" onClick={() => setCreateOpen(true)}>Create Scene</Button>
 
-                                <Select onValueChange={(value) => form.setValue("status", value as typeof SCENE_STATUSES[number])}>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Scene status" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {SCENE_STATUSES.map((status) => (
-                                            <SelectItem key={status} value={status}>{status}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                
-                                {form.formState.errors.root && <p>{form.formState.errors.root.message}</p>}
-                                <Button type="submit">Create</Button>
-                            </form>
-                        </DialogContent>
-                    </Dialog>
-                </TabsContent>
+            <SceneDialog
+                open={createOpen}
+                onOpenChange={setCreateOpen}
+                onSubmit={onSceneCreate}
+            />
+            <SceneDialog
+                open={editOpen}
+                onOpenChange={setEditOpen}
+                scene={selectedScene ?? undefined}
+                onSubmit={(data) => onSceneUpdate(selectedScene!.id, data)}
+            />
+            <SceneDeleteDialog
+                open={deleteOpen}
+                onOpenChange={setDeleteOpen}
+                scene={selectedScene}
+                onConfirm={() => selectedScene && onSceneDelete(selectedScene.id)}
+            />
+        </TabsContent>
     )
 }

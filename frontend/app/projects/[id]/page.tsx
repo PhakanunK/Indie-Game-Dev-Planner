@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
 export default function Project() {
     const { token, isLoading } = useAuth()
     const router = useRouter()
-    const { tasks, onTaskCreate, onTaskUpdate, onTaskDelete, scenes, sceneForm, onSceneSubmit, activities, onlineUserIds, members } = useProject()
+    const { tasks, onTaskCreate, onTaskUpdate, onTaskDelete, scenes, onSceneCreate, onSceneUpdate, onSceneDelete, activities, onlineUserIds, members } = useProject()
     const [sidebarOpen, setSidebarOpen] = useState(true)
     useEffect(() => {
         if (!isLoading && !token) {
@@ -41,7 +41,7 @@ export default function Project() {
                         <TabsTrigger value="activity">Activity</TabsTrigger>
                     </TabsList>
                     <TasksTab tasks={tasks} onTaskCreate={onTaskCreate} onTaskUpdate={onTaskUpdate} onTaskDelete={onTaskDelete} />
-                    <ScenesTab scenes={scenes} form={sceneForm} onSubmit={onSceneSubmit}/>
+                    <ScenesTab scenes={scenes} onSceneCreate={onSceneCreate} onSceneUpdate={onSceneUpdate} onSceneDelete={onSceneDelete} />
                     <ActivitiesTab activities={activities} />
                 </Tabs>
             </div>
