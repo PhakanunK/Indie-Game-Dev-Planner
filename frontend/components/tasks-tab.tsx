@@ -1,18 +1,17 @@
 "use client"
 
-import { useTasks } from "@/hooks/use-tasks"
+import { useState } from "react"
+import { closestCenter, DndContext, DragEndEvent, DragOverlay, DragStartEvent, PointerSensor, useSensor, useSensors, useDroppable } from "@dnd-kit/core"
+import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import { TabsContent } from "./ui/tabs"
+import { Button } from "./ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
 import { Task } from "@/lib/models/task.model"
 import { TASK_STATUSES } from "@/lib/utils/constants"
-import { closestCenter, DndContext, DragEndEvent, DragOverlay, DragStartEvent, useDroppable } from "@dnd-kit/core"
-import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
-import TaskCard from "./task-card"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
-import { Button } from "./ui/button"
-import { Input } from "./ui/input"
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "./ui/select"
-import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
+import { useTasks } from "@/hooks/use-tasks"
+import TaskCard from "./tasks/task-card"
+import TaskDialog from "./tasks/task-dialog"
+import TaskDeleteDialog from "./tasks/task-delete-dialog"
 
 const COLUMN_LABELS: Record<typeof TASK_STATUSES[number], string> = {
     todo: "To Do",
@@ -27,14 +26,7 @@ const VALID_TRANSITIONS: Record<string, string> = {
     in_progress: "done"
 }
 
-type TasksTabProps = {
-    tasks: Task[]
-    form: ReturnType<typeof useTasks>["taskForm"]
-    onSubmit: ReturnType<typeof useTasks>["onTaskSubmit"]
-    onTaskUpdate: ReturnType<typeof useTasks>["onTaskUpdate"]
-}
-
-function DroppableColumn({ status, children }: { status: string, children: React.ReactNode }) {
+function DroppableColumn({ status, children }: { status: string; children: React.ReactNode }) {
     const { setNodeRef, isOver } = useDroppable({ id: status })
     return (
         <div
@@ -46,8 +38,20 @@ function DroppableColumn({ status, children }: { status: string, children: React
     )
 }
 
-export default function TasksTab({ tasks, form, onSubmit, onTaskUpdate }: TasksTabProps) {
+type TasksTabProps = {
+    tasks: Task[]
+    onTaskCreate: ReturnType<typeof useTasks>["onTaskCreate"]
+    onTaskUpdate: ReturnType<typeof useTasks>["onTaskUpdate"]
+    onTaskDelete: ReturnType<typeof useTasks>["onTaskDelete"]
+}
+
+export default function TasksTab({ tasks, onTaskCreate, onTaskUpdate, onTaskDelete }: TasksTabProps) {
+    const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }))
     const [activeTask, setActiveTask] = useState<Task | null>(null)
+    const [createOpen, setCreateOpen] = useState(false)
+    const [editOpen, setEditOpen] = useState(false)
+    const [deleteOpen, setDeleteOpen] = useState(false)
+    const [selectedTask, setSelectedTask] = useState<Task | null>(null)
 
     const handleDragStart = (event: DragStartEvent) => {
         const task = tasks.find(t => t.id === event.active.id)
@@ -74,7 +78,7 @@ export default function TasksTab({ tasks, form, onSubmit, onTaskUpdate }: TasksT
 
     return (
         <TabsContent value="tasks">
-            <DndContext collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
                 <div className="grid grid-cols-3 gap-4">
                     {TASK_STATUSES.map(status => {
                         const columnTasks = tasks
@@ -90,7 +94,14 @@ export default function TasksTab({ tasks, form, onSubmit, onTaskUpdate }: TasksT
                                 </div>
                                 <SortableContext items={columnTasks.map(t => t.id)} strategy={verticalListSortingStrategy}>
                                     <DroppableColumn status={status}>
-                                        {columnTasks.map(task => <TaskCard key={task.id} task={task} />)}
+                                        {columnTasks.map(task => (
+                                            <TaskCard
+                                                key={task.id}
+                                                task={task}
+                                                onEdit={(t) => { setSelectedTask(t); setEditOpen(true) }}
+                                                onDelete={(t) => { setSelectedTask(t); setDeleteOpen(true) }}
+                                            />
+                                        ))}
                                     </DroppableColumn>
                                 </SortableContext>
                             </div>
@@ -113,28 +124,26 @@ export default function TasksTab({ tasks, form, onSubmit, onTaskUpdate }: TasksT
                     )}
                 </DragOverlay>
             </DndContext>
-            <Dialog>
-                <DialogTrigger asChild>
-                    <Button className="mt-4">Create Task</Button>
-                </DialogTrigger>
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>Create Task</DialogTitle>
-                    </DialogHeader>
-                    <form onSubmit={form.handleSubmit(onSubmit)}>
-                        <Input {...form.register("title")} placeholder="Task title" />
-                        {form.formState.errors.title && <p>{form.formState.errors.title.message}</p>}
-                        <Select onValueChange={(value) => form.setValue("status", value as typeof TASK_STATUSES[number])}>
-                            <SelectTrigger><SelectValue placeholder="Status" /></SelectTrigger>
-                            <SelectContent>
-                                {TASK_STATUSES.map(s => <SelectItem key={s} value={s}>{COLUMN_LABELS[s]}</SelectItem>)}
-                            </SelectContent>
-                        </Select>
-                        {form.formState.errors.root && <p>{form.formState.errors.root.message}</p>}
-                        <Button type="submit" className="mt-2">Create</Button>
-                    </form>
-                </DialogContent>
-            </Dialog>
+
+            <Button className="mt-4" onClick={() => setCreateOpen(true)}>Create Task</Button>
+
+            <TaskDialog
+                open={createOpen}
+                onOpenChange={setCreateOpen}
+                onSubmit={onTaskCreate}
+            />
+            <TaskDialog
+                open={editOpen}
+                onOpenChange={setEditOpen}
+                task={selectedTask ?? undefined}
+                onSubmit={(data) => onTaskUpdate(selectedTask!.id, data)}
+            />
+            <TaskDeleteDialog
+                open={deleteOpen}
+                onOpenChange={setDeleteOpen}
+                task={selectedTask}
+                onConfirm={() => selectedTask && onTaskDelete(selectedTask.id)}
+            />
         </TabsContent>
     )
 }

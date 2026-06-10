@@ -1,75 +1,74 @@
 "use client"
 
-import { createTask, deleteTask, getTasks, updateTask } from "@/lib/actions/task.actions";
-import { Task } from "@/lib/models/task.model";
-import socket from "@/lib/socket";
-import { TASK_STATUSES } from "@/lib/utils/constants";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { createTask, deleteTask, getTasks, updateTask } from "@/lib/actions/task.actions"
+import { Task } from "@/lib/models/task.model"
+import socket from "@/lib/socket"
+import { TASK_PRIORITIES, TASK_STATUSES } from "@/lib/utils/constants"
+import { useEffect, useState } from "react"
 
-const taskSchema = z.object({
-    title: z.string().min(1),
-    status: z.enum(TASK_STATUSES)
-})
+type TaskCreateInput = {
+    title: string
+    status: typeof TASK_STATUSES[number]
+    priority: typeof TASK_PRIORITIES[number]
+    due_date?: string
+}
 
-type TaskFormData = z.infer<typeof taskSchema>
+type TaskUpdateInput = {
+    title?: string
+    status?: typeof TASK_STATUSES[number]
+    priority?: typeof TASK_PRIORITIES[number]
+    due_date?: string | null
+}
 
 export const useTasks = (projectId: number, token: string) => {
-    const taskForm = useForm<TaskFormData>({ resolver: zodResolver(taskSchema) })
     const [tasks, setTasks] = useState<Task[]>([])
+
     useEffect(() => {
         if (token) {
             getTasks(token, projectId).then(setTasks)
         }
     }, [token, projectId])
+
     useEffect(() => {
-        const handler = (data: {action: string, task: Task}) => {
+        const handler = (data: { action: string; task: Task }) => {
             if (data.action === "created") {
                 setTasks(prev => [...prev, data.task])
-            }
-            else if (data.action === "updated") {
+            } else if (data.action === "updated") {
                 setTasks(prev => prev.map(t => t.id === data.task.id ? data.task : t))
-            }
-            else if (data.action === "deleted") {
+            } else if (data.action === "deleted") {
                 setTasks(prev => prev.filter(t => t.id !== data.task.id))
             }
         }
         socket.on("task:updated", handler)
-        return () => {
-            socket.off("task:updated", handler)
-        }
+        return () => { socket.off("task:updated", handler) }
     }, [])
 
-    const onTaskSubmit = async (data: TaskFormData) => {
-        try {
-            if (!token) return
-            await createTask(token, projectId, { ...data, order: tasks.length })
-        } catch {
-            taskForm.setError("root", { message: "Failed to create task" })
-        }
+    const onTaskCreate = async (data: TaskCreateInput) => {
+        if (!token) return
+        await createTask(token, projectId, {
+            ...data,
+            due_date: data.due_date ? new Date(data.due_date).toISOString() : undefined,
+            order: tasks.length
+        })
     }
 
-    const onTaskUpdate = async (taskId: number, data: {
-        title?: string
-        status?: typeof TASK_STATUSES[number]
-    }) => {
+    const onTaskUpdate = async (taskId: number, data: TaskUpdateInput) => {
         try {
             if (!token) return
             setTasks(prev => prev.map(t => t.id === taskId ? { ...t, ...data } : t))
-            await updateTask(token, projectId, taskId, data)
+            await updateTask(token, projectId, taskId, {
+                ...data,
+                due_date: data.due_date ? new Date(data.due_date).toISOString() : data.due_date
+            })
         } catch {
             getTasks(token, projectId).then(setTasks)
         }
     }
 
     const onTaskDelete = async (taskId: number) => {
-        try {
-            if (!token) return
-            await deleteTask(token, projectId, taskId)
-        } catch {}
+        if (!token) return
+        await deleteTask(token, projectId, taskId)
     }
 
-    return { tasks, taskForm, onTaskSubmit, onTaskUpdate, onTaskDelete }
+    return { tasks, onTaskCreate, onTaskUpdate, onTaskDelete }
 }
