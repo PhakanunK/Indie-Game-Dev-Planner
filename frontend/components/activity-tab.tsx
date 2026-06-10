@@ -1,8 +1,8 @@
 "use client"
 
+import { formatDistanceToNow } from "date-fns"
 import { useActivities } from "@/hooks/use-activities"
 import { TabsContent } from "./ui/tabs"
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
 
 type ActivitiesTabProps = {
     activities: ReturnType<typeof useActivities>
@@ -11,19 +11,19 @@ type ActivitiesTabProps = {
 export default function ActivitiesTab({ activities }: ActivitiesTabProps) {
     return (
         <TabsContent value="activity">
-            {activities.map((activity) => (
-                <div key={activity.id}>
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>{activity.action}</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p>{activity.entity_type}</p>
-                            <p>{activity.created_at}</p>
-                        </CardContent>
-                    </Card>
-                </div>
-            ))}
+            <div className="flex flex-col divide-y divide-border">
+                {activities.map((activity) => (
+                    <div key={activity.id} className="flex items-center justify-between py-3">
+                        <p className="text-sm">
+                            <span className="font-medium">{activity.user?.username ?? "Unknown"}</span>
+                            {" "}{activity.action}
+                        </p>
+                        <span className="text-xs text-muted-foreground shrink-0 ml-4">
+                            {formatDistanceToNow(new Date(activity.created_at), { addSuffix: true })}
+                        </span>
+                    </div>
+                ))}
+            </div>
         </TabsContent>
     )
 }
