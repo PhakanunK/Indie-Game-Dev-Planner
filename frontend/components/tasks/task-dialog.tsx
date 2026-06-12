@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { format } from "date-fns"
 import { CalendarIcon } from "lucide-react"
+import { toast } from "sonner"
 import { Task } from "@/lib/models/task.model"
 import { TASK_PRIORITIES, TASK_STATUSES } from "@/lib/utils/constants"
 import FormDialog, { FormField } from "@/components/form-dialog"
@@ -61,8 +62,10 @@ export default function TaskDialog({ open, onOpenChange, onSubmit, task }: TaskD
     const handleSubmit = async (data: TaskFormData) => {
         try {
             await onSubmit(data)
+            toast.success(task ? "Task updated" : "Task created")
             onOpenChange(false)
         } catch {
+            toast.error("Something went wrong")
             form.setError("root", { message: "Something went wrong" })
         }
     }

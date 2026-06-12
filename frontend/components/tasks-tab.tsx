@@ -40,12 +40,13 @@ function DroppableColumn({ status, children }: { status: string; children: React
 
 type TasksTabProps = {
     tasks: Task[]
+    isLoading: boolean
     onTaskCreate: ReturnType<typeof useTasks>["onTaskCreate"]
     onTaskUpdate: ReturnType<typeof useTasks>["onTaskUpdate"]
     onTaskDelete: ReturnType<typeof useTasks>["onTaskDelete"]
 }
 
-export default function TasksTab({ tasks, onTaskCreate, onTaskUpdate, onTaskDelete }: TasksTabProps) {
+export default function TasksTab({ tasks, isLoading, onTaskCreate, onTaskUpdate, onTaskDelete }: TasksTabProps) {
     const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }))
     const [activeTask, setActiveTask] = useState<Task | null>(null)
     const [createOpen, setCreateOpen] = useState(false)
@@ -76,6 +77,12 @@ export default function TasksTab({ tasks, onTaskCreate, onTaskUpdate, onTaskDele
         onTaskUpdate(draggedTask.id, { status: overStatus })
     }
 
+    if (isLoading) return (
+        <TabsContent value="tasks">
+            <p className="text-sm text-muted-foreground py-8 text-center">Loading tasks...</p>
+        </TabsContent>
+    )
+
     return (
         <TabsContent value="tasks">
             <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
@@ -94,6 +101,9 @@ export default function TasksTab({ tasks, onTaskCreate, onTaskUpdate, onTaskDele
                                 </div>
                                 <SortableContext items={columnTasks.map(t => t.id)} strategy={verticalListSortingStrategy}>
                                     <DroppableColumn status={status}>
+                                        {columnTasks.length === 0 && (
+                                            <p className="text-xs text-muted-foreground text-center py-4">No tasks</p>
+                                        )}
                                         {columnTasks.map(task => (
                                             <TaskCard
                                                 key={task.id}

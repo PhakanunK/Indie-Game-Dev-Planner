@@ -1,16 +1,26 @@
 "use client"
 
 import { formatDistanceToNow } from "date-fns"
-import { useActivities } from "@/hooks/use-activities"
+import { Activity } from "@/lib/models/activity.model"
 import { TabsContent } from "./ui/tabs"
 
 type ActivitiesTabProps = {
-    activities: ReturnType<typeof useActivities>
+    activities: Activity[]
+    isLoading: boolean
 }
 
-export default function ActivitiesTab({ activities }: ActivitiesTabProps) {
+export default function ActivitiesTab({ activities, isLoading }: ActivitiesTabProps) {
+    if (isLoading) return (
+        <TabsContent value="activity">
+            <p className="text-sm text-muted-foreground py-8 text-center">Loading activity...</p>
+        </TabsContent>
+    )
+
     return (
         <TabsContent value="activity">
+            {activities.length === 0 && (
+                <p className="text-sm text-muted-foreground py-8 text-center">No activity yet.</p>
+            )}
             <div className="flex flex-col divide-y divide-border">
                 {activities.map((activity) => (
                     <div key={activity.id} className="flex items-center justify-between py-3">

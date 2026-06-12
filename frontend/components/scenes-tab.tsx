@@ -11,19 +11,29 @@ import SceneDeleteDialog from "./scenes/scene-delete-dialog"
 
 type ScenesTabProps = {
     scenes: Scene[]
+    isLoading: boolean
     onSceneCreate: ReturnType<typeof useScenes>["onSceneCreate"]
     onSceneUpdate: ReturnType<typeof useScenes>["onSceneUpdate"]
     onSceneDelete: ReturnType<typeof useScenes>["onSceneDelete"]
 }
 
-export default function ScenesTab({ scenes, onSceneCreate, onSceneUpdate, onSceneDelete }: ScenesTabProps) {
+export default function ScenesTab({ scenes, isLoading, onSceneCreate, onSceneUpdate, onSceneDelete }: ScenesTabProps) {
     const [createOpen, setCreateOpen] = useState(false)
     const [editOpen, setEditOpen] = useState(false)
     const [deleteOpen, setDeleteOpen] = useState(false)
     const [selectedScene, setSelectedScene] = useState<Scene | null>(null)
 
+    if (isLoading) return (
+        <TabsContent value="scenes">
+            <p className="text-sm text-muted-foreground py-8 text-center">Loading scenes...</p>
+        </TabsContent>
+    )
+
     return (
         <TabsContent value="scenes">
+            {scenes.length === 0 && (
+                <p className="text-sm text-muted-foreground py-8 text-center">No scenes yet. Create your first scene.</p>
+            )}
             <div className="grid grid-cols-3 gap-4">
                 {scenes.map(scene => (
                     <SceneCard

@@ -41,8 +41,8 @@ export const useProject = () => {
             socket.off("user:presence", handler)
         }
     }, [])
-    const tasks = useTasks(projectId, token ?? "")
-    const scenes = useScenes(projectId, token ?? "")
-    const activities = useActivities(projectId, token ?? "")
-    return {...tasks, ...scenes, activities, onlineUserIds, members}
+    const { isLoading: tasksLoading, ...tasks } = useTasks(projectId, token ?? "")
+    const { isLoading: scenesLoading, ...scenes } = useScenes(projectId, token ?? "")
+    const { isLoading: activitiesLoading, ...activitiesData } = useActivities(projectId, token ?? "")
+    return { ...tasks, tasksLoading, ...scenes, scenesLoading, ...activitiesData, activitiesLoading, onlineUserIds, members }
 }

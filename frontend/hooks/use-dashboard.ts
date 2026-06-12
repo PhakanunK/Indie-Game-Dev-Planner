@@ -6,6 +6,7 @@ import { Project } from "@/lib/models/project.model"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
+import { toast } from "sonner"
 import { z } from "zod"
 
 const schema = z.object({
@@ -21,10 +22,12 @@ type FormData = z.infer<typeof schema>
 export const useDashboard = () => {
     const form = useForm<FormData>({ resolver: zodResolver(schema) })
     const [projects, setProjects] = useState<Project[]>([])
+    const [isLoading, setIsLoading] = useState(true)
     const { token } = useAuth()
     useEffect(() => {
         if (token) {
-            getProjects(token).then(setProjects)
+            setIsLoading(true)
+            getProjects(token).then(setProjects).finally(() => setIsLoading(false))
         }
     }, [token])
     const onSubmit = async (data: FormData) => {
@@ -34,10 +37,12 @@ export const useDashboard = () => {
             }
             const newProject = await createProject(token, data)
             setProjects(prev => [...prev, newProject])
+            toast.success("Project created")
         } catch {
+            toast.error("Failed to create project")
             form.setError("root", { message: "Failed to create project" })
         }
 
     }
-    return { projects, form, onSubmit }
+    return { projects, isLoading, form, onSubmit }
 }

@@ -13,7 +13,7 @@ import { useEffect} from "react"
 export default function Dashboard() {
     const {token, isLoading} = useAuth()
     const router = useRouter()
-    const {projects, form, onSubmit} = useDashboard()
+    const {projects, isLoading: projectsLoading, form, onSubmit} = useDashboard()
     useEffect(() => {
         if (!isLoading && !token) {
             router.replace("/login")
@@ -25,7 +25,11 @@ export default function Dashboard() {
 
     return (
         <div className="p-6">
-            {projects.map((project) => (
+            {projectsLoading ? (
+                <p className="text-sm text-muted-foreground">Loading projects...</p>
+            ) : projects.length === 0 ? (
+                <p className="text-sm text-muted-foreground">No projects yet. Create your first project.</p>
+            ) : projects.map((project) => (
                 <div key={project.id}>
                     <Link href={`/projects/${project.id}`}>
                         <Card>

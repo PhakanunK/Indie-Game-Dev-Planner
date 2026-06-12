@@ -22,10 +22,12 @@ type TaskUpdateInput = {
 
 export const useTasks = (projectId: number, token: string) => {
     const [tasks, setTasks] = useState<Task[]>([])
+    const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
         if (token) {
-            getTasks(token, projectId).then(setTasks)
+            setIsLoading(true)
+            getTasks(token, projectId).then(setTasks).finally(() => setIsLoading(false))
         }
     }, [token, projectId])
 
@@ -70,5 +72,5 @@ export const useTasks = (projectId: number, token: string) => {
         await deleteTask(token, projectId, taskId)
     }
 
-    return { tasks, onTaskCreate, onTaskUpdate, onTaskDelete }
+    return { tasks, isLoading, onTaskCreate, onTaskUpdate, onTaskDelete }
 }

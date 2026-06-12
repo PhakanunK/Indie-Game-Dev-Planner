@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
 export default function Project() {
     const { token, isLoading } = useAuth()
     const router = useRouter()
-    const { tasks, onTaskCreate, onTaskUpdate, onTaskDelete, scenes, onSceneCreate, onSceneUpdate, onSceneDelete, activities, onlineUserIds, members } = useProject()
+    const { tasks, tasksLoading, onTaskCreate, onTaskUpdate, onTaskDelete, scenes, scenesLoading, onSceneCreate, onSceneUpdate, onSceneDelete, activities, activitiesLoading, onlineUserIds, members } = useProject()
     const [sidebarOpen, setSidebarOpen] = useState(true)
     useEffect(() => {
         if (!isLoading && !token) {
@@ -40,9 +40,9 @@ export default function Project() {
                         <TabsTrigger value="scenes">Scenes</TabsTrigger>
                         <TabsTrigger value="activity">Activity</TabsTrigger>
                     </TabsList>
-                    <TasksTab tasks={tasks} onTaskCreate={onTaskCreate} onTaskUpdate={onTaskUpdate} onTaskDelete={onTaskDelete} />
-                    <ScenesTab scenes={scenes} onSceneCreate={onSceneCreate} onSceneUpdate={onSceneUpdate} onSceneDelete={onSceneDelete} />
-                    <ActivitiesTab activities={activities} />
+                    <TasksTab tasks={tasks} isLoading={tasksLoading} onTaskCreate={onTaskCreate} onTaskUpdate={onTaskUpdate} onTaskDelete={onTaskDelete} />
+                    <ScenesTab scenes={scenes} isLoading={scenesLoading} onSceneCreate={onSceneCreate} onSceneUpdate={onSceneUpdate} onSceneDelete={onSceneDelete} />
+                    <ActivitiesTab activities={activities} isLoading={activitiesLoading} />
                 </Tabs>
             </div>
             <MemberSidebar members={members} onlineUserIds={onlineUserIds} isOpen={sidebarOpen} onToggle={() => setSidebarOpen(prev => !prev)} />

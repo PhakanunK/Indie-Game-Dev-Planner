@@ -4,6 +4,7 @@ import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
+import { toast } from "sonner"
 import { Scene } from "@/lib/models/scene.model"
 import { SCENE_STATUSES, SCENE_TYPES } from "@/lib/utils/constants"
 import FormDialog, { FormField } from "@/components/form-dialog"
@@ -61,8 +62,10 @@ export default function SceneDialog({ open, onOpenChange, onSubmit, scene }: Sce
     const handleSubmit = async (data: SceneFormData) => {
         try {
             await onSubmit(data)
+            toast.success(scene ? "Scene updated" : "Scene created")
             onOpenChange(false)
         } catch {
+            toast.error("Something went wrong")
             form.setError("root", { message: "Something went wrong" })
         }
     }

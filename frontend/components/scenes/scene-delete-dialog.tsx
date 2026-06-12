@@ -1,5 +1,6 @@
 "use client"
 
+import { toast } from "sonner"
 import { Scene } from "@/lib/models/scene.model"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
@@ -25,7 +26,7 @@ export default function SceneDeleteDialog({ open, onOpenChange, scene, onConfirm
                 </p>
                 <div className="flex justify-end gap-2 mt-4">
                     <Button variant="ghost" onClick={() => onOpenChange(false)}>Cancel</Button>
-                    <Button variant="destructive" onClick={() => { onConfirm(); onOpenChange(false) }}>Delete</Button>
+                    <Button variant="destructive" onClick={() => { onConfirm(); onOpenChange(false); toast.success("Scene deleted") }}>Delete</Button>
                 </div>
             </DialogContent>
         </Dialog>

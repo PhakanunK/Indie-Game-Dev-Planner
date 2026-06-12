@@ -23,10 +23,12 @@ type SceneUpdateInput = {
 
 export const useScenes = (projectId: number, token: string) => {
     const [scenes, setScenes] = useState<Scene[]>([])
+    const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
         if (token) {
-            getScenes(token, projectId).then(setScenes)
+            setIsLoading(true)
+            getScenes(token, projectId).then(setScenes).finally(() => setIsLoading(false))
         }
     }, [token, projectId])
 
@@ -63,5 +65,5 @@ export const useScenes = (projectId: number, token: string) => {
         } catch {}
     }
 
-    return { scenes, onSceneCreate, onSceneUpdate, onSceneDelete }
+    return { scenes, isLoading, onSceneCreate, onSceneUpdate, onSceneDelete }
 }
