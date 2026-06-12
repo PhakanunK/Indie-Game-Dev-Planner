@@ -4,4 +4,8 @@ export interface Member {
     user_id: number
     role: ("owner" | "member")
     joined_at: string
+    user: {
+        id: number
+        username: string
+    }
 }

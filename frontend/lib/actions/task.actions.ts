@@ -1,4 +1,5 @@
 import { Task } from "../models/task.model";
+import { TASK_PRIORITIES, TASK_STATUSES } from "../utils/constants";
 
 export const getTasks = async (token: string, projectId: number): Promise<Task[]> => {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/projects/${projectId}/tasks`, {
@@ -13,7 +14,8 @@ export const getTasks = async (token: string, projectId: number): Promise<Task[]
 
 export const createTask = async (token: string, projectId: number, data: {
     title: string
-    status?: "todo" | "in_progress" | "done"
+    status?: typeof TASK_STATUSES[number]
+    priority?: typeof TASK_PRIORITIES[number]
     due_date?: string | null
     order: number
 }): Promise<Task> => {
@@ -33,7 +35,8 @@ export const createTask = async (token: string, projectId: number, data: {
 
 export const updateTask = async (token: string, projectId: number, taskId: number, data: {
     title?: string
-    status?: "todo" | "in_progress" | "done"
+    status?: typeof TASK_STATUSES[number]
+    priority?: typeof TASK_PRIORITIES[number]
     due_date?: string | null
     order?: number
 }): Promise<Task> => {

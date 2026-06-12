@@ -1,7 +1,10 @@
 import { prisma } from "../utils/prisma"
 
 export const findAllByProjectId = (projectId: number) => {
-    return prisma.projectMember.findMany({where: {project_id: projectId}})
+    return prisma.projectMember.findMany({
+        where: {project_id: projectId},
+        include: {user: {select: {id: true, username:true}}}
+    })
 }
 
 export const removeById = (projectId: number, userId: number) => {

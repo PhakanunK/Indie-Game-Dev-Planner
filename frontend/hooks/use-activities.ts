@@ -7,9 +7,11 @@ import { useEffect, useState } from "react"
 
 export const useActivities = (projectId: number, token: string) => {
     const [activities, setActivities] = useState<Activity[]>([])
+    const [isLoading, setIsLoading] = useState(true)
     useEffect(() => {
             if (token) {
-                getActivities(token, projectId).then(setActivities)
+                setIsLoading(true)
+                getActivities(token, projectId).then(setActivities).finally(() => setIsLoading(false))
             }
         }, [token, projectId])
     useEffect (() => {
@@ -21,5 +23,5 @@ export const useActivities = (projectId: number, token: string) => {
             socket.off("activity:new", handler)
         }
     }, [])
-    return activities
+    return { activities, isLoading }
 }

@@ -1,4 +1,5 @@
 import { Scene } from "../models/scene.model";
+import { SCENE_STATUSES, SCENE_TYPES } from "../utils/constants";
 
 export const getScenes = async (token: string, projectId: number): Promise<Scene[]> => {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/projects/${projectId}/scenes`, {
@@ -15,8 +16,8 @@ export const createScene = async (token: string, projectId: number, data: {
     title: string
     description?: string
     image_url?: string
-    type: "cutscene" | "gameplay" | "boss" | "dialogue" | "other"
-    status: "planned" | "in_progress" | "done"
+    type: typeof SCENE_TYPES[number]
+    status: typeof SCENE_STATUSES[number]
 }): Promise<Scene> => {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/projects/${projectId}/scenes`, {
         method: "POST",
@@ -36,8 +37,8 @@ export const updateScene = async (token: string, projectId: number, sceneId: num
     title?: string
     description?: string
     image_url?: string
-    type?: "cutscene" | "gameplay" | "boss" | "dialogue" | "other"
-    status?: "planned" | "in_progress" | "done"
+    type?: typeof SCENE_TYPES[number]
+    status?: typeof SCENE_STATUSES[number]
 }): Promise<Scene> => {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/projects/${projectId}/scenes/${sceneId}`, {
         method: "PATCH",

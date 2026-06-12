@@ -8,10 +8,15 @@ export const create = (projectId: number, userId: number, action: string, entity
             action: action,
             entity_type: entityType,
             entity_id: entityId
-        }
+        },
+        include: { user: { select: { id: true, username: true } } }
     })
 }
 
 export const findAllByProjectId = (projectId: number) => {
-    return prisma.activity.findMany({where: {project_id: projectId}, orderBy: {created_at: "desc"}})
+    return prisma.activity.findMany({
+        where: { project_id: projectId },
+        orderBy: { created_at: "desc" },
+        include: { user: { select: { id: true, username: true } } }
+    })
 }
