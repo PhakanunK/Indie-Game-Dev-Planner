@@ -1,8 +1,11 @@
 "use client"
 
+import { useState } from "react"
 import { Scene } from "@/lib/models/scene.model"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 import { Pencil, Trash2 } from "lucide-react"
 import Image from "next/image"
 
@@ -27,12 +30,37 @@ interface SceneCardProps {
 }
 
 export default function SceneCard({ scene, onEdit, onDelete }: SceneCardProps) {
+    const [imageOpen, setImageOpen] = useState(false)
+    const [imgLoaded, setImgLoaded] = useState(false)
+    const handleOpenChange = (open: boolean) => {
+        setImageOpen(open)
+        if (!open) setImgLoaded(false)
+    }
+
     return (
         <Card className="overflow-hidden">
             {scene.image_url && (
-                <div className="relative w-full h-32">
-                    <Image src={scene.image_url} alt={scene.title} fill className="object-cover" />
-                </div>
+                <>
+                    <div
+                        className="relative w-full h-32 cursor-pointer"
+                        onClick={() => setImageOpen(true)}
+                    >
+                        <Image src={scene.image_url} alt={scene.title} fill className="object-cover" />
+                    </div>
+                    <Dialog open={imageOpen} onOpenChange={handleOpenChange}>
+                        <DialogContent className="w-fit max-w-[80vw] sm:max-w-[80vw] p-0 gap-0 overflow-hidden">
+                            <VisuallyHidden><DialogTitle>{scene.title}</DialogTitle></VisuallyHidden>
+                            {!imgLoaded && <div className="w-full h-48 bg-muted animate-pulse rounded" />}
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                                src={scene.image_url}
+                                alt={scene.title}
+                                className={`block max-w-[80vw] max-h-[80vh] w-auto h-auto transition-opacity duration-300 ${imgLoaded ? "opacity-100" : "opacity-0"}`}
+                                onLoad={() => setImgLoaded(true)}
+                            />
+                        </DialogContent>
+                    </Dialog>
+                </>
             )}
             <CardHeader className="p-3 pb-1">
                 <div className="flex items-start justify-between gap-2">
