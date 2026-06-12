@@ -18,12 +18,25 @@ export const useProject = () => {
     const {token} = useAuth()
     const router = useRouter()
     const [project, setProject] = useState<Project | null>(null)
+    const [projectError, setProjectError] = useState<"not_found" | "forbidden" | null>(null)
+    const [accessToken, setAccessToken] = useState("")
     const [onlineUserIds, setOnlineUserIds] = useState<number[]>([])
     const [members, setMembers] = useState<Member[]>([])
     useEffect(() => {
         if (token) {
-            getProject(token, projectId).then(setProject)
-            getMembers(token, projectId).then(setMembers)
+            getProject(token, projectId)
+                .then((p) => {
+                    setProject(p)
+                    setAccessToken(token)
+                    return getMembers(token, projectId)
+                })
+                .then(setMembers)
+                .catch((err: unknown) => {
+                    const msg = err instanceof Error ? err.message : ""
+                    if (msg === "PROJECT_NOT_FOUND") setProjectError("not_found")
+                    else if (msg === "PROJECT_FORBIDDEN") setProjectError("forbidden")
+                    else setProjectError("not_found")
+                })
             if (socket.connected) {
                 socket.emit("project:join", {projectId})
             }
@@ -56,8 +69,8 @@ export const useProject = () => {
         await deleteProject(token, projectId)
         router.push("/dashboard")
     }
-    const { isLoading: tasksLoading, ...tasks } = useTasks(projectId, token ?? "")
-    const { isLoading: scenesLoading, ...scenes } = useScenes(projectId, token ?? "")
-    const { isLoading: activitiesLoading, ...activitiesData } = useActivities(projectId, token ?? "")
-    return { project, ...tasks, tasksLoading, ...scenes, scenesLoading, ...activitiesData, activitiesLoading, onlineUserIds, members, onProjectUpdate, onProjectDelete }
+    const { isLoading: tasksLoading, ...tasks } = useTasks(projectId, accessToken)
+    const { isLoading: scenesLoading, ...scenes } = useScenes(projectId, accessToken)
+    const { isLoading: activitiesLoading, ...activitiesData } = useActivities(projectId, accessToken)
+    return { project, projectError, ...tasks, tasksLoading, ...scenes, scenesLoading, ...activitiesData, activitiesLoading, onlineUserIds, members, onProjectUpdate, onProjectDelete }
 }
