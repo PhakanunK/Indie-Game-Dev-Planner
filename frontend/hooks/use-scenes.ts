@@ -1,6 +1,6 @@
 "use client"
 
-import { createScene, deleteScene, getScenes, updateScene } from "@/lib/actions/scene.actions"
+import { addSceneLink, createScene, deleteScene, getScenes, removeSceneLink, updateScene } from "@/lib/actions/scene.actions"
 import { Scene } from "@/lib/models/scene.model"
 import socket from "@/lib/socket"
 import { SCENE_STATUSES, SCENE_TYPES } from "@/lib/utils/constants"
@@ -19,6 +19,8 @@ type SceneUpdateInput = {
     image_url?: string
     type?: typeof SCENE_TYPES[number]
     status?: typeof SCENE_STATUSES[number]
+    pos_x?: number
+    pos_y?: number
 }
 
 export const useScenes = (projectId: number, token: string) => {
@@ -52,10 +54,8 @@ export const useScenes = (projectId: number, token: string) => {
     }
 
     const onSceneUpdate = async (sceneId: number, data: SceneUpdateInput) => {
-        try {
-            if (!token) return
-            await updateScene(token, projectId, sceneId, data)
-        } catch {}
+        if (!token) return
+        await updateScene(token, projectId, sceneId, data)
     }
 
     const onSceneDelete = async (sceneId: number) => {
@@ -65,5 +65,25 @@ export const useScenes = (projectId: number, token: string) => {
         } catch {}
     }
 
-    return { scenes, isLoading, onSceneCreate, onSceneUpdate, onSceneDelete }
+    const onSceneLinkAdd = async (fromSceneId: number, toSceneId: number, label?: string) => {
+        if (!token) return
+        const link = await addSceneLink(token, projectId, fromSceneId, { to_scene_id: toSceneId, label })
+        setScenes(prev => prev.map(s =>
+            s.id === fromSceneId
+                ? { ...s, outgoinglinks: [...(s.outgoinglinks ?? []), link] }
+                : s
+        ))
+    }
+
+    const onSceneLinkRemove = async (fromSceneId: number, linkId: number) => {
+        if (!token) return
+        await removeSceneLink(token, projectId, fromSceneId, linkId)
+        setScenes(prev => prev.map(s =>
+            s.id === fromSceneId
+                ? { ...s, outgoinglinks: (s.outgoinglinks ?? []).filter(l => l.id !== linkId) }
+                : s
+        ))
+    }
+
+    return { scenes, isLoading, onSceneCreate, onSceneUpdate, onSceneDelete, onSceneLinkAdd, onSceneLinkRemove }
 }

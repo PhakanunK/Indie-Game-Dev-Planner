@@ -5,7 +5,7 @@ import { TabsContent } from "./ui/tabs"
 import { Button } from "./ui/button"
 import { Scene } from "@/lib/models/scene.model"
 import { useScenes } from "@/hooks/use-scenes"
-import SceneCard from "./scenes/scene-card"
+import SceneFlowCanvas from "./scenes/scene-flow-canvas"
 import SceneDialog from "./scenes/scene-dialog"
 import SceneDeleteDialog from "./scenes/scene-delete-dialog"
 
@@ -15,9 +15,11 @@ type ScenesTabProps = {
     onSceneCreate: ReturnType<typeof useScenes>["onSceneCreate"]
     onSceneUpdate: ReturnType<typeof useScenes>["onSceneUpdate"]
     onSceneDelete: ReturnType<typeof useScenes>["onSceneDelete"]
+    onSceneLinkAdd: ReturnType<typeof useScenes>["onSceneLinkAdd"]
+    onSceneLinkRemove: ReturnType<typeof useScenes>["onSceneLinkRemove"]
 }
 
-export default function ScenesTab({ scenes, isLoading, onSceneCreate, onSceneUpdate, onSceneDelete }: ScenesTabProps) {
+export default function ScenesTab({ scenes, isLoading, onSceneCreate, onSceneUpdate, onSceneDelete, onSceneLinkAdd, onSceneLinkRemove  }: ScenesTabProps) {
     const [createOpen, setCreateOpen] = useState(false)
     const [editOpen, setEditOpen] = useState(false)
     const [deleteOpen, setDeleteOpen] = useState(false)
@@ -30,23 +32,21 @@ export default function ScenesTab({ scenes, isLoading, onSceneCreate, onSceneUpd
     )
 
     return (
-        <TabsContent value="scenes">
+        <TabsContent value="scenes" className="flex flex-col">
             <div className="flex items-center justify-between mb-4">
-                <h2 className="text-sm font-medium text-muted-foreground">Scenes</h2>
+                <h2 className="text-sm font-medium text-muted-foreground">Scene Flow</h2>
                 <Button size="sm" onClick={() => setCreateOpen(true)}>+ Create Scene</Button>
             </div>
-            {scenes.length === 0 && (
-                <p className="text-sm text-muted-foreground py-8 text-center">No scenes yet. Create your first scene.</p>
-            )}
-            <div className="grid grid-cols-3 gap-4">
-                {scenes.map(scene => (
-                    <SceneCard
-                        key={scene.id}
-                        scene={scene}
-                        onEdit={(s) => { setSelectedScene(s); setEditOpen(true) }}
-                        onDelete={(s) => { setSelectedScene(s); setDeleteOpen(true) }}
-                    />
-                ))}
+
+            <div className="h-[calc(100vh-320px)] min-h-[400px] rounded-lg border border-border overflow-hidden">
+                <SceneFlowCanvas
+                    scenes={scenes}
+                    onEdit={(s) => { setSelectedScene(s); setEditOpen(true) }}
+                    onDelete={(s) => { setSelectedScene(s); setDeleteOpen(true) }}
+                    onSceneUpdate={onSceneUpdate}
+                    onSceneLinkAdd={onSceneLinkAdd}
+                    onSceneLinkRemove={onSceneLinkRemove}
+                />
             </div>
 
             <SceneDialog

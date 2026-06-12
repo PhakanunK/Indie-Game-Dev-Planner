@@ -105,6 +105,8 @@ model Scene {
   image_url     String?     @db.Text
   type          SceneType
   status        SceneStatus @default(planned)
+  pos_x         Float?
+  pos_y         Float?
   created_at    DateTime    @default(now())
   updated_at    DateTime    @updatedAt
   outgoinglinks SceneLink[] @relation("FromScene")
