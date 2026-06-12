@@ -4,7 +4,7 @@ import { memo } from "react"
 import { Handle, Position, type NodeProps } from "@xyflow/react"
 import { Pencil, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { type SceneNodeData } from "@/lib/utils/scene-flow-layout"
+import { type SceneNodeData, type SceneNodeType } from "@/lib/utils/scene-flow-layout"
 
 const TYPE_COLORS: Record<string, string> = {
     cutscene: "bg-purple-500/15 text-purple-400",
@@ -20,7 +20,7 @@ const STATUS_COLORS: Record<string, string> = {
     done: "bg-green-500/15 text-green-500",
 }
 
-function SceneFlowNode({ data }: NodeProps<SceneNodeData>) {
+function SceneFlowNode({ data }: NodeProps<SceneNodeType>) {
     const { scene, onEdit, onDelete } = data
     return (
         <div className="bg-card border border-border rounded-lg overflow-hidden w-55 shadow-sm">

@@ -2,12 +2,12 @@
 
 import { BaseEdge, EdgeLabelRenderer, getBezierPath, type EdgeProps } from "@xyflow/react"
 import { X } from "lucide-react"
-import { type SceneEdgeData } from "@/lib/utils/scene-flow-layout"
+import { type SceneEdgeData, type SceneEdgeType } from "@/lib/utils/scene-flow-layout"
 
 export default function SceneFlowEdge({
     id, sourceX, sourceY, targetX, targetY,
     sourcePosition, targetPosition, label, markerEnd, data
-}: EdgeProps<SceneEdgeData>) {
+}: EdgeProps<SceneEdgeType>) {
     const [edgePath, labelX, labelY] = getBezierPath({ sourceX, sourceY, sourcePosition, targetX, targetY, targetPosition })
     const { linkId, fromSceneId, onSceneLinkRemove } = data ?? {}
 
