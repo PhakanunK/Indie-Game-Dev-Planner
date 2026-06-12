@@ -94,7 +94,14 @@ export default function TasksTab({ tasks, isLoading, onTaskCreate, onTaskUpdate,
                     {TASK_STATUSES.map(status => {
                         const columnTasks = tasks
                             .filter(t => t.status === status)
-                            .sort((a, b) => PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority])
+                            .sort((a, b) => {
+                                if (!a.due_date && !b.due_date) return PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority]
+                                if (!a.due_date) return 1
+                                if (!b.due_date) return -1
+                                const d = new Date(a.due_date).getTime() - new Date(b.due_date).getTime()
+                                if (d !== 0) return d
+                                return PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority]
+                            })
                         return (
                             <div key={status} className="flex flex-col gap-2">
                                 <div className="flex items-center justify-between">
