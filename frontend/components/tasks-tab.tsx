@@ -85,6 +85,10 @@ export default function TasksTab({ tasks, isLoading, onTaskCreate, onTaskUpdate,
 
     return (
         <TabsContent value="tasks">
+            <div className="flex items-center justify-between mb-4">
+                <h2 className="text-sm font-medium text-muted-foreground">Kanban Board</h2>
+                <Button size="sm" onClick={() => setCreateOpen(true)}>+ Create Task</Button>
+            </div>
             <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
                 <div className="grid grid-cols-3 gap-4">
                     {TASK_STATUSES.map(status => {
@@ -134,8 +138,6 @@ export default function TasksTab({ tasks, isLoading, onTaskCreate, onTaskUpdate,
                     )}
                 </DragOverlay>
             </DndContext>
-
-            <Button className="mt-4" onClick={() => setCreateOpen(true)}>Create Task</Button>
 
             <TaskDialog
                 open={createOpen}

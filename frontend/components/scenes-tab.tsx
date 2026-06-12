@@ -31,6 +31,10 @@ export default function ScenesTab({ scenes, isLoading, onSceneCreate, onSceneUpd
 
     return (
         <TabsContent value="scenes">
+            <div className="flex items-center justify-between mb-4">
+                <h2 className="text-sm font-medium text-muted-foreground">Scenes</h2>
+                <Button size="sm" onClick={() => setCreateOpen(true)}>+ Create Scene</Button>
+            </div>
             {scenes.length === 0 && (
                 <p className="text-sm text-muted-foreground py-8 text-center">No scenes yet. Create your first scene.</p>
             )}
@@ -44,8 +48,6 @@ export default function ScenesTab({ scenes, isLoading, onSceneCreate, onSceneUpd
                     />
                 ))}
             </div>
-
-            <Button className="mt-4" onClick={() => setCreateOpen(true)}>Create Scene</Button>
 
             <SceneDialog
                 open={createOpen}
