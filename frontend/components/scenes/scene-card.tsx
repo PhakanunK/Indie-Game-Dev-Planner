@@ -4,6 +4,7 @@ import { Scene } from "@/lib/models/scene.model"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Pencil, Trash2 } from "lucide-react"
+import Image from "next/image"
 
 const TYPE_LABELS: Record<Scene["type"], string> = {
     cutscene: "Cutscene",
@@ -27,7 +28,12 @@ interface SceneCardProps {
 
 export default function SceneCard({ scene, onEdit, onDelete }: SceneCardProps) {
     return (
-        <Card>
+        <Card className="overflow-hidden">
+            {scene.image_url && (
+                <div className="relative w-full h-32">
+                    <Image src={scene.image_url} alt={scene.title} fill className="object-cover" />
+                </div>
+            )}
             <CardHeader className="p-3 pb-1">
                 <div className="flex items-start justify-between gap-2">
                     <CardTitle className="text-sm">{scene.title}</CardTitle>
