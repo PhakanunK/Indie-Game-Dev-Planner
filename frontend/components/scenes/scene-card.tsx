@@ -23,6 +23,12 @@ const STATUS_LABELS: Record<Scene["status"], string> = {
     done: "Done"
 }
 
+const STATUS_STYLES: Record<Scene["status"], string> = {
+    planned: "bg-muted text-muted-foreground",
+    in_progress: "bg-blue-500/15 text-blue-500",
+    done: "bg-green-500/15 text-green-500"
+}
+
 interface SceneCardProps {
     scene: Scene
     onEdit: (scene: Scene) => void
@@ -79,11 +85,11 @@ export default function SceneCard({ scene, onEdit, onDelete }: SceneCardProps) {
                 {scene.description && (
                     <p className="text-xs text-muted-foreground line-clamp-2">{scene.description}</p>
                 )}
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-wrap">
                     <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
                         {TYPE_LABELS[scene.type]}
                     </span>
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${STATUS_STYLES[scene.status]}`}>
                         {STATUS_LABELS[scene.status]}
                     </span>
                 </div>

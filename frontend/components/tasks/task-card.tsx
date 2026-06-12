@@ -7,6 +7,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Pencil, Trash2 } from "lucide-react"
 
+const PRIORITY_STYLES: Record<string, string> = {
+    high: "bg-red-500/15 text-red-500",
+    medium: "bg-yellow-500/15 text-yellow-500",
+    low: "bg-green-500/15 text-green-500"
+}
+
 interface TaskCardProps {
     task: Task
     onEdit: (task: Task) => void
@@ -36,10 +42,14 @@ export default function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
                 </div>
             </CardHeader>
             <CardContent className="p-3 pt-0">
-                <p className="text-xs text-muted-foreground">{task.priority}</p>
-                {task.due_date && (
-                    <p className="text-xs text-muted-foreground">Due: {new Date(task.due_date).toLocaleDateString()}</p>
-                )}
+                <div className="flex items-center gap-2 flex-wrap">
+                    <span className={`text-xs px-2 py-0.5 rounded-full capitalize ${PRIORITY_STYLES[task.priority]}`}>
+                        {task.priority}
+                    </span>
+                    {task.due_date && (
+                        <span className="text-xs text-muted-foreground">Due: {new Date(task.due_date).toLocaleDateString()}</span>
+                    )}
+                </div>
             </CardContent>
         </Card>
     )
