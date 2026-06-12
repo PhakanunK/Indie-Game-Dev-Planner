@@ -1,5 +1,6 @@
 import React from "react"
 import PixelRain from "@/components/pixel-rain"
+import ThemeToggle from "@/components/theme-toggle"
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
     return (
@@ -29,7 +30,10 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             </div>
 
             {/* Right form */}
-            <div className="flex-1 flex items-center justify-center p-8">
+            <div className="flex-1 flex items-center justify-center p-8 relative">
+                <div className="absolute top-4 right-4">
+                    <ThemeToggle />
+                </div>
                 {children}
             </div>
         </div>
