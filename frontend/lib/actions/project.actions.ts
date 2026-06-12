@@ -68,8 +68,8 @@ export const getProject = async (token: string, projectId: number): Promise<Proj
         method: "GET",
         headers: {"Authorization": `Bearer ${token}`},
     })
-    if (!response.ok) {
-        throw new Error("Failed to get a project")
-    }
+    if (response.status === 404) throw new Error("PROJECT_NOT_FOUND")
+    if (response.status === 403) throw new Error("PROJECT_FORBIDDEN")
+    if (!response.ok) throw new Error("Failed to get project")
     return await response.json()
 }

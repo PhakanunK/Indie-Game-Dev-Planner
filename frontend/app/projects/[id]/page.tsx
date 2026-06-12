@@ -13,13 +13,13 @@ import { useAuth } from "@/contexts/auth";
 import { useProject } from "@/hooks/use-project";
 import { ChevronLeft, Pencil, Trash2, UserPlus } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Project() {
     const { token, isLoading, user } = useAuth()
     const router = useRouter()
-    const { project, tasks, tasksLoading, onTaskCreate, onTaskUpdate, onTaskDelete, scenes, scenesLoading, onSceneCreate, onSceneUpdate, onSceneDelete, activities, activitiesLoading, onlineUserIds, members, onProjectUpdate, onProjectDelete } = useProject()
+    const { project, projectError, tasks, tasksLoading, onTaskCreate, onTaskUpdate, onTaskDelete, scenes, scenesLoading, onSceneCreate, onSceneUpdate, onSceneDelete, activities, activitiesLoading, onlineUserIds, members, onProjectUpdate, onProjectDelete } = useProject()
     const [sidebarOpen, setSidebarOpen] = useState(true)
     const [editOpen, setEditOpen] = useState(false)
     const [deleteOpen, setDeleteOpen] = useState(false)
@@ -31,6 +31,12 @@ export default function Project() {
         }
     }, [token, isLoading])
     if (isLoading || !token) {
+        return null
+    }
+
+    if (projectError === "not_found") notFound()
+    if (projectError === "forbidden") {
+        router.replace("/dashboard")
         return null
     }
 
