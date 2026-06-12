@@ -10,7 +10,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
                 <PixelRain />
 
                 <div className="relative">
-                    <h1 className="text-3xl font-bold tracking-tight">Indie Game Dev</h1>
+                    <h1 className="text-3xl font-bold tracking-tight">Indie Game Dev Planner</h1>
                     <p className="text-muted-foreground mt-1">Plan your game. Build your world.</p>
                 </div>
 

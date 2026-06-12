@@ -2,6 +2,7 @@
 
 import ActivitiesTab from "@/components/activity-tab";
 import MemberSidebar from "@/components/member-sidebar";
+import InviteDialog from "@/components/projects/invite-dialog";
 import ProjectDeleteDialog from "@/components/projects/project-delete-dialog";
 import ProjectDialog from "@/components/projects/project-dialog";
 import ScenesTab from "@/components/scenes-tab";
@@ -10,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/contexts/auth";
 import { useProject } from "@/hooks/use-project";
-import { ChevronLeft, Pencil, Trash2 } from "lucide-react";
+import { ChevronLeft, Pencil, Trash2, UserPlus } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -22,6 +23,7 @@ export default function Project() {
     const [sidebarOpen, setSidebarOpen] = useState(true)
     const [editOpen, setEditOpen] = useState(false)
     const [deleteOpen, setDeleteOpen] = useState(false)
+    const [inviteOpen, setInviteOpen] = useState(false)
     const isOwner = user && project ? user.id === project.owner_id : false
     useEffect(() => {
         if (!isLoading && !token) {
@@ -41,6 +43,9 @@ export default function Project() {
                     </Link>
                     {isOwner && project && (
                         <div className="flex gap-2">
+                            <Button variant="ghost" size="sm" onClick={() => setInviteOpen(true)}>
+                                <UserPlus size={14} className="mr-1" /> Invite
+                            </Button>
                             <Button variant="ghost" size="icon" onClick={() => setEditOpen(true)}>
                                 <Pencil size={16} />
                             </Button>
@@ -61,6 +66,7 @@ export default function Project() {
                     <>
                         <ProjectDialog open={editOpen} onOpenChange={setEditOpen} project={project} onSubmit={onProjectUpdate} />
                         <ProjectDeleteDialog open={deleteOpen} onOpenChange={setDeleteOpen} project={project} onConfirm={onProjectDelete} />
+                        <InviteDialog open={inviteOpen} onOpenChange={setInviteOpen} projectId={project.id} token={token} />
                     </>
                 )}
                 <Tabs defaultValue="tasks">
