@@ -19,7 +19,7 @@ import { useEffect, useState } from "react";
 export default function Project() {
     const { token, isLoading, user } = useAuth()
     const router = useRouter()
-    const { project, projectError, tasks, tasksLoading, onTaskCreate, onTaskUpdate, onTaskDelete, scenes, scenesLoading, onSceneCreate, onSceneUpdate, onSceneDelete, activities, activitiesLoading, onlineUserIds, members, onProjectUpdate, onProjectDelete } = useProject()
+    const { project, projectError, tasks, tasksLoading, onTaskCreate, onTaskUpdate, onTaskDelete, scenes, scenesLoading, onSceneCreate, onSceneUpdate, onSceneDelete, onSceneLinkAdd, onSceneLinkRemove, activities, activitiesLoading, onlineUserIds, members, onProjectUpdate, onProjectDelete } = useProject()
     const [sidebarOpen, setSidebarOpen] = useState(true)
     const [editOpen, setEditOpen] = useState(false)
     const [deleteOpen, setDeleteOpen] = useState(false)
@@ -82,7 +82,7 @@ export default function Project() {
                         <TabsTrigger value="activity">Activity</TabsTrigger>
                     </TabsList>
                     <TasksTab tasks={tasks} isLoading={tasksLoading} onTaskCreate={onTaskCreate} onTaskUpdate={onTaskUpdate} onTaskDelete={onTaskDelete} />
-                    <ScenesTab scenes={scenes} isLoading={scenesLoading} onSceneCreate={onSceneCreate} onSceneUpdate={onSceneUpdate} onSceneDelete={onSceneDelete} />
+                    <ScenesTab scenes={scenes} isLoading={scenesLoading} onSceneCreate={onSceneCreate} onSceneUpdate={onSceneUpdate} onSceneDelete={onSceneDelete} onSceneLinkAdd={onSceneLinkAdd} onSceneLinkRemove={onSceneLinkRemove} />
                     <ActivitiesTab activities={activities} isLoading={activitiesLoading} />
                 </Tabs>
             </div>

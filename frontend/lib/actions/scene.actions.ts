@@ -1,4 +1,4 @@
-import { Scene } from "../models/scene.model";
+import { Scene, SceneLink } from "../models/scene.model";
 import { SCENE_STATUSES, SCENE_TYPES } from "../utils/constants";
 
 export const getScenes = async (token: string, projectId: number): Promise<Scene[]> => {
@@ -39,6 +39,8 @@ export const updateScene = async (token: string, projectId: number, sceneId: num
     image_url?: string
     type?: typeof SCENE_TYPES[number]
     status?: typeof SCENE_STATUSES[number]
+    pos_x?: number
+    pos_y?: number
 }): Promise<Scene> => {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/projects/${projectId}/scenes/${sceneId}`, {
         method: "PATCH",
@@ -62,4 +64,22 @@ export const deleteScene = async (token: string, projectId: number, sceneId: num
     if (!response.ok) {
         throw new Error("Failed to delete scene")
     }
+}
+
+export const addSceneLink = async (token: string, projectId: number, sceneId: number, data: { to_scene_id: number; label?: string }): Promise<SceneLink> => {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/projects/${projectId}/scenes/${sceneId}/links`, {
+        method: "POST",
+        headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+    })
+    if (!response.ok) throw new Error("Failed to add scene link")
+    return await response.json()
+}
+
+export const removeSceneLink = async (token: string, projectId: number, sceneId: number, linkId: number): Promise<void> => {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/projects/${projectId}/scenes/${sceneId}/links/${linkId}`, {
+        method: "DELETE",
+        headers: { "Authorization": `Bearer ${token}` }
+    })
+    if (!response.ok) throw new Error("Failed to remove scene link")
 }

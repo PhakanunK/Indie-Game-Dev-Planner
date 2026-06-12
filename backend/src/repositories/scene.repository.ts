@@ -2,11 +2,14 @@ import { CreateSceneData, CreateSceneLinkData, UpdateSceneData } from "../schema
 import { prisma } from "../utils/prisma"
 
 export const findAllByProjectId = (projectId: number) => {
-    return prisma.scene.findMany({where: {project_id: projectId}})
+    return prisma.scene.findMany({
+        where: {project_id: projectId},
+        include: {outgoinglinks: true}
+    })
 }
 
 export const findById = (id: number) => {
-    return prisma.scene.findUnique({where: {id}})
+    return prisma.scene.findUnique({where: {id}, include: {outgoinglinks: true}})
 }
 
 export const create = (projectId: number, ownerId: number, data: CreateSceneData) => {
@@ -15,12 +18,13 @@ export const create = (projectId: number, ownerId: number, data: CreateSceneData
             ...data,
             project_id: projectId,
             created_by_id: ownerId,
-        }
+        },
+        include: {outgoinglinks: true}
     })
 }
 
 export const update = (id: number, data: UpdateSceneData) => {
-    return prisma.scene.update({where: {id}, data})
+    return prisma.scene.update({where: {id}, data, include: {outgoinglinks: true}})
 }
 
 export const deleteById = (id: number) => {

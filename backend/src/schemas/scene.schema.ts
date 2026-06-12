@@ -15,7 +15,9 @@ export const updateSceneSchema = z.object({
     description: z.string().optional(),
     image_url: z.string().optional(),
     type: z.enum(["cutscene", "gameplay", "boss", "dialogue", "other"]).optional(),
-    status: z.enum(["planned", "in_progress", "done"]).optional()
+    status: z.enum(["planned", "in_progress", "done"]).optional(),
+    pos_x: z.number().optional(),
+    pos_y: z.number().optional()
 })
 
 export type UpdateSceneData = z.infer<typeof updateSceneSchema>
