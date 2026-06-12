@@ -17,12 +17,15 @@ export type SceneEdgeData = {
     onSceneLinkRemove: (fromSceneId: number, linkId: number) => Promise<void>
 }
 
+export type SceneNodeType = Node<SceneNodeData, "sceneNode">
+export type SceneEdgeType = Edge<SceneEdgeData, "sceneEdge">
+
 export function buildSceneFlowLayout(
     scenes: Scene[],
     onEdit: (scene: Scene) => void,
     onDelete: (scene: Scene) => void,
     onSceneLinkRemove?: (fromSceneId: number, linkId: number) => Promise<void>
-): { nodes: Node<SceneNodeData>[]; edges: Edge<SceneEdgeData>[] } {
+): { nodes: SceneNodeType[]; edges: SceneEdgeType[] } {
     const g = new dagre.graphlib.Graph()
     g.setDefaultEdgeLabel(() => ({}))
     g.setGraph({ rankdir: "LR", ranksep: 80, nodesep: 40 })
@@ -39,7 +42,7 @@ export function buildSceneFlowLayout(
 
     dagre.layout(g)
 
-    const nodes: Node<SceneNodeData>[] = scenes.map(scene => {
+    const nodes: SceneNodeType[] = scenes.map(scene => {
         const pos = g.node(String(scene.id))
         // Use stored position if available, otherwise use dagre calculated position
         const x = scene.pos_x !== null && scene.pos_x !== undefined ? scene.pos_x : pos.x - NODE_WIDTH / 2
@@ -52,7 +55,7 @@ export function buildSceneFlowLayout(
         }
     })
 
-    const edges: Edge<SceneEdgeData>[] = scenes.flatMap(scene =>
+    const edges: SceneEdgeType[] = scenes.flatMap(scene =>
         (scene.outgoinglinks ?? []).map(link => ({
             id: String(link.id),
             source: String(link.from_scene_id),

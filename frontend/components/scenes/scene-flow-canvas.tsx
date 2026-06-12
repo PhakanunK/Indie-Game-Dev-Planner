@@ -8,20 +8,20 @@ import {
     useNodesState,
     useEdgesState,
     type Connection,
-    type Edge,
     type Node,
-    type NodeDragHandler,
+    type NodeTypes,
+    type EdgeTypes,
     BackgroundVariant,
 } from "@xyflow/react"
 import "@xyflow/react/dist/style.css"
 import { useTheme } from "next-themes"
 import { Scene } from "@/lib/models/scene.model"
-import { buildSceneFlowLayout, type SceneNodeData, type SceneEdgeData } from "@/lib/utils/scene-flow-layout"
+import { buildSceneFlowLayout, type SceneNodeType, type SceneEdgeType, type SceneEdgeData } from "@/lib/utils/scene-flow-layout"
 import SceneFlowNode from "./scene-flow-node"
 import SceneFlowEdge from "./scene-flow-edge"
 
-const nodeTypes = { sceneNode: SceneFlowNode }
-const edgeTypes = { sceneEdge: SceneFlowEdge }
+const nodeTypes: NodeTypes = { sceneNode: SceneFlowNode as NodeTypes[string] }
+const edgeTypes: EdgeTypes = { sceneEdge: SceneFlowEdge as EdgeTypes[string] }
 
 type Props = {
     scenes: Scene[]
@@ -34,8 +34,8 @@ type Props = {
 
 export default function SceneFlowCanvas({ scenes, onEdit, onDelete, onSceneUpdate, onSceneLinkAdd, onSceneLinkRemove }: Props) {
     const { theme } = useTheme()
-    const [nodes, setNodes, onNodesChange] = useNodesState<Node<SceneNodeData>>([])
-    const [edges, setEdges, onEdgesChange] = useEdgesState<Edge<SceneEdgeData>>([])
+    const [nodes, setNodes, onNodesChange] = useNodesState<SceneNodeType>([])
+    const [edges, setEdges, onEdgesChange] = useEdgesState<SceneEdgeType>([])
 
     const sceneIds = useMemo(() => scenes.map(s => s.id).sort().join(","), [scenes])
     const linkKey = useMemo(
@@ -80,9 +80,8 @@ export default function SceneFlowCanvas({ scenes, onEdit, onDelete, onSceneUpdat
         await onSceneLinkAdd(Number(connection.source), Number(connection.target))
     }, [onSceneLinkAdd])
 
-    const onNodeDragStop: NodeDragHandler = useCallback(async (_, node) => {
-        const sceneId = Number(node.id)
-        await onSceneUpdate(sceneId, { pos_x: node.position.x, pos_y: node.position.y })
+    const onNodeDragStop = useCallback(async (_: MouseEvent | TouchEvent, node: Node) => {
+        await onSceneUpdate(Number(node.id), { pos_x: node.position.x, pos_y: node.position.y })
     }, [onSceneUpdate])
 
     if (scenes.length === 0) {
