@@ -18,6 +18,18 @@ The technically interesting parts are the real-time sync layer (every change bro
 
 ---
 
+## Screenshots
+
+| Dashboard | Project Board |
+|-----------|--------------|
+| ![Dashboard](screenshots/dashboard.png) | ![Project Board](screenshots/project-board.png) |
+
+| Scene Flow | Activity Feed |
+|------------|--------------|
+| ![Scene Flow](screenshots/scene-flow.png) | ![Activity Feed](screenshots/activity-feed.png) |
+
+---
+
 ## Tech Stack
 
 | Layer | Technology |
