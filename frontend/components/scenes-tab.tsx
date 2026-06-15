@@ -38,7 +38,7 @@ export default function ScenesTab({ scenes, isLoading, onSceneCreate, onSceneUpd
                 <Button size="sm" onClick={() => setCreateOpen(true)}>+ Create Scene</Button>
             </div>
 
-            <div className="h-[calc(100vh-320px)] min-h-[400px] rounded-lg border border-border overflow-hidden">
+            <div className="h-[calc(100vh-320px)] min-h-100 rounded-lg border border-border overflow-hidden">
                 <SceneFlowCanvas
                     scenes={scenes}
                     onEdit={(s) => { setSelectedScene(s); setEditOpen(true) }}
