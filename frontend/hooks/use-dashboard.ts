@@ -10,13 +10,18 @@ import { toast } from "sonner"
 export const useDashboard = () => {
     const [projects, setProjects] = useState<Project[]>([])
     const [isLoading, setIsLoading] = useState(true)
-    const { token } = useAuth()
+    const { token, isLoading: authLoading } = useAuth()
     useEffect(() => {
+        if (authLoading) {
+            return
+        }
         if (token) {
             setIsLoading(true)
             getProjects(token).then(setProjects).finally(() => setIsLoading(false))
+        } else {
+            setIsLoading(false)
         }
-    }, [token])
+    }, [token, authLoading])
     const onProjectCreate = async (data: ProjectFormData) => {
         if (!token) return
         const newProject = await createProject(token, data)

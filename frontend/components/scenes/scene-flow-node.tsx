@@ -1,9 +1,13 @@
 "use client"
 
-import { memo } from "react"
+import { memo, useState } from "react"
 import { Handle, Position, type NodeProps } from "@xyflow/react"
 import { Pencil, Trash2 } from "lucide-react"
+import Image from "next/image"
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { type SceneNodeData, type SceneNodeType } from "@/lib/utils/scene-flow-layout"
 
 const TYPE_COLORS: Record<string, string> = {
@@ -22,44 +26,77 @@ const STATUS_COLORS: Record<string, string> = {
 
 function SceneFlowNode({ data }: NodeProps<SceneNodeType>) {
     const { scene, onEdit, onDelete } = data
+    const [imageOpen, setImageOpen] = useState(false)
+    const [imgLoaded, setImgLoaded] = useState(false)
+
+    const handleOpenChange = (open: boolean) => {
+        setImageOpen(open)
+        if (!open) setImgLoaded(false)
+    }
+
     return (
-        <div className="bg-card border border-border rounded-lg overflow-hidden w-55 shadow-sm">
+        <div className="relative w-55">
             <Handle
                 type="target"
                 position={Position.Left}
                 className="w-3! h-3! bg-primary! border-2! border-background!"
             />
 
-            {scene.image_url && (
-                <img
-                    src={scene.image_url}
-                    alt={scene.title}
-                    className="w-full h-20 object-cover block"
-                />
-            )}
+            <Card className="overflow-hidden shadow-sm">
+                {scene.image_url && (
+                    <>
+                        <div
+                            className="relative w-full h-20 cursor-pointer"
+                            onClick={() => setImageOpen(true)}
+                            onMouseDown={e => e.stopPropagation()}
+                        >
+                            <Image src={scene.image_url} alt={scene.title} fill className="object-cover" />
+                        </div>
+                        <Dialog open={imageOpen} onOpenChange={handleOpenChange}>
+                            <DialogContent className="w-fit max-w-[80vw] sm:max-w-[80vw] p-0 gap-0 overflow-hidden">
+                                <VisuallyHidden><DialogTitle>{scene.title}</DialogTitle></VisuallyHidden>
+                                {!imgLoaded && <div className="w-full h-48 bg-muted animate-pulse rounded" />}
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img
+                                    src={scene.image_url}
+                                    alt={scene.title}
+                                    className={`block max-w-[80vw] max-h-[80vh] w-auto h-auto transition-opacity duration-300 ${imgLoaded ? "opacity-100" : "opacity-0"}`}
+                                    onLoad={() => setImgLoaded(true)}
+                                />
+                            </DialogContent>
+                        </Dialog>
+                    </>
+                )}
 
-            <div className="p-3">
-                <div className="flex items-start justify-between gap-1 mb-2">
-                    <p className="text-sm font-medium leading-tight line-clamp-2">{scene.title}</p>
-                    <div className="flex gap-0.5 shrink-0" onMouseDown={e => e.stopPropagation()}>
-                        <Button variant="ghost" size="icon" className="h-5 w-5" onClick={() => onEdit(scene)}>
-                            <Pencil size={10} />
-                        </Button>
-                        <Button variant="ghost" size="icon" className="h-5 w-5 text-destructive hover:text-destructive" onClick={() => onDelete(scene)}>
-                            <Trash2 size={10} />
-                        </Button>
+                <CardHeader className="p-3 pb-1">
+                    <div className="flex items-start justify-between gap-2">
+                        <CardTitle className="text-sm line-clamp-2">{scene.title}</CardTitle>
+                        <div className="flex gap-1 shrink-0" onMouseDown={e => e.stopPropagation()}>
+                            <Button variant="ghost" size="icon" className="h-5 w-5" onClick={() => onEdit(scene)}>
+                                <Pencil size={10} />
+                            </Button>
+                            <Button variant="ghost" size="icon" className="h-5 w-5 text-destructive hover:text-destructive" onClick={() => onDelete(scene)}>
+                                <Trash2 size={10} />
+                            </Button>
+                        </div>
                     </div>
-                </div>
+                </CardHeader>
 
-                <div className="flex gap-1 flex-wrap">
-                    <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${TYPE_COLORS[scene.type]}`}>
-                        {scene.type}
-                    </span>
-                    <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${STATUS_COLORS[scene.status]}`}>
-                        {scene.status.replace("_", " ")}
-                    </span>
-                </div>
-            </div>
+                <CardContent className="p-3 pt-1 flex flex-col gap-2">
+                    {scene.description && (
+                        <p className="text-xs text-muted-foreground line-clamp-2">{scene.description}</p>
+                    )}
+
+                    <div className="flex gap-2 flex-wrap">
+                        <span className={`text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground`}>
+                            {scene.type}
+                        </span>
+                        <span className={`text-xs px-2 py-0.5 rounded-full ${STATUS_COLORS[scene.status]}`}>
+                            {scene.status.replace("_", " ")}
+                        </span>
+                    </div>
+                </CardContent>
+            </Card>
 
             <Handle
                 type="source"
